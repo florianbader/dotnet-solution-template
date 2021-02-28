@@ -1,0 +1,40 @@
+parameters:
+  - name: Major
+    type: number
+    default: 1
+
+  - name: Minor
+    type: number
+    default: 1
+
+  - name: Suffix
+    type: string
+    default: ''
+
+variables:
+  - name: VersionMajor
+    value: ${{ parameters.Major }}
+
+  - name: VersionMinor
+    value: ${{ parameters.Minor }}
+
+  - name: VersionSuffix
+    value: ${{ parameters.Suffix }}
+
+  - name: VersionMajorMinor
+    value: $[format('{0}.{1}', variables['VersionMajor'], variables['VersionMinor'])]
+
+  - name: VersionMajorMinorSuffix
+    ${{ if eq(parameters.Suffix, '') }}:
+      value: $[format('{0}.{1}', variables['VersionMajor'], variables['VersionMinor'])]
+    ${{ if ne(parameters.Suffix, '') }}:
+      value: $[format('{0}.{1}-{2}', variables['VersionMajor'], variables['VersionMinor'], variables['VersionSuffix'])]
+
+  - name: VersionRevision
+    value: $[counter(variables.VersionMajorMinorSuffix, 0)]
+
+  - name: Version
+    ${{ if eq(parameters.Suffix, '') }}:
+      value: $[format('{0}.{1}', variables['VersionMajorMinor'], variables['VersionRevision'])]
+    ${{ if ne(parameters.Suffix, '') }}:
+      value: $[format('{0}.{1}-{2}', variables['VersionMajorMinor'], variables['VersionRevision'], variables['VersionSuffix'])]

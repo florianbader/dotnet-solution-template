@@ -1,0 +1,39 @@
+using System;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
+using Serilog;
+
+namespace WebApi.Diagnostics
+{
+    public class SerilogExceptionMiddleware
+    {
+        private readonly RequestDelegate _next;
+
+        public SerilogExceptionMiddleware(RequestDelegate next) => _next = next ?? throw new ArgumentNullException(nameof(next));
+
+        public Task Invoke(HttpContext httpContext)
+        {
+            if (httpContext == null)
+            {
+                throw new ArgumentNullException(nameof(httpContext));
+            }
+
+            return InvokeInternalAsync(httpContext);
+        }
+
+        private async Task InvokeInternalAsync(HttpContext httpContext)
+        {
+            try
+            {
+                await _next(httpContext);
+            }
+            catch (Exception ex)
+            {
+                Log.Logger
+                    .ForRequest(httpContext.Request)
+                    .Error(ex, "Request exception occurred");
+                throw;
+            }
+        }
+    }
+}

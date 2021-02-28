@@ -1,0 +1,10 @@
+{
+    "overrides": [
+        {
+            "files": "eng/**/*.yml",
+            "options": {
+                "singleQuote": true
+            }
+        }
+    ]
+}

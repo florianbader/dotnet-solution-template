@@ -1,0 +1,11 @@
+{
+  "recommendations": [
+    "esbenp.prettier-vscode",
+    "ms-azure-devops.azure-pipelines",
+    "ms-dotnettools.csharp",
+    "davidanson.vscode-markdownlint",
+    "42crunch.vscode-openapi",
+    "mermade.openapi-lint",
+    "EditorConfig.EditorConfig"
+  ]
+}

@@ -1,0 +1,42 @@
+trigger:
+  batch: false
+  branches:
+    include:
+      - master
+  paths:
+    include:
+      - src/*
+
+variables:
+  - template: ../templates/version.yml
+    parameters:
+      Major: 1
+      Minor: 0
+
+resources:
+  pipelines:
+    - pipeline: build
+      source: Backend.Build
+      trigger:
+        stages:
+          - Build
+
+name: $(Version)
+
+stages:
+  - template: build.yml
+
+  - template: deployment.yml
+    parameters:
+      Environment: dev
+      EnvironmentName: Development
+
+  - template: deployment.yml
+    parameters:
+      Environment: test
+      EnvironmentName: Testing
+
+  - template: deployment.yml
+    parameters:
+      Environment: prod
+      EnvironmentName: Production

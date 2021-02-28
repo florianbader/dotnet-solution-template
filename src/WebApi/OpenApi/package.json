@@ -1,0 +1,14 @@
+{
+  "name": "webapi",
+  "version": "1.0.0",
+  "description": "",
+  "devDependencies": {
+    "@openapitools/openapi-generator-cli": "^2.1.22"
+  },
+  "scripts": {
+    "generate-openapi": "openapi-generator-cli generate -g aspnetcore -i openapi.yaml -o out",
+    "openapi-generator": "openapi-generator-cli"
+  },
+  "author": "",
+  "license": "MIT"
+}
