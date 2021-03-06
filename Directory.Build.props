@@ -11,6 +11,7 @@
     <PackageReference Include="StyleCop.Analyzers" Version="1.2.0-beta.321" PrivateAssets="all" />
     <PackageReference Include="SonarAnalyzer.CSharp" Version="8.17.0.26580" PrivateAssets="all" />
     <PackageReference Include="Roslynator.Analyzers" Version="3.1.0" PrivateAssets="all" />
+    <PackageReference Include="IDisposableAnalyzers" Version="3.4.13" PrivateAssets="all" />
   </ItemGroup>
 
   <ItemGroup Condition="$(IsTestProject)">
