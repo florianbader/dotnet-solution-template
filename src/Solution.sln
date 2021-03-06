@@ -3,17 +3,17 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.29613.14
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebApi", "WebApi.csproj", "{09F6E5C2-CC55-42D7-B7E0-4340B876EC5D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebApi", "WebApi\WebApi.csproj", "{09F6E5C2-CC55-42D7-B7E0-4340B876EC5D}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{F9F7D9C5-A1F0-49D4-B91F-45D41E908EF8}"
 	ProjectSection(SolutionItems) = preProject
-		..\..\.editorconfig = ..\..\.editorconfig
-		..\..\Directory.Build.props = ..\..\Directory.Build.props
-		..\..\Directory.Build.targets = ..\..\Directory.Build.targets
-		..\..\SonarLint.xml = ..\..\SonarLint.xml
+		..\.editorconfig = ..\.editorconfig
+		..\Directory.Build.props = ..\Directory.Build.props
+		..\Directory.Build.targets = ..\Directory.Build.targets
+		..\SonarLint.xml = ..\SonarLint.xml
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Application", "..\Application\Application.csproj", "{D63A438C-FE46-4EDC-A30B-159479939A2D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Application", "Application\Application.csproj", "{D63A438C-FE46-4EDC-A30B-159479939A2D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
