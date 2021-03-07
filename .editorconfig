@@ -45,6 +45,7 @@ indent_size = 2
 
 # Markdown Files
 [*.md]
+max_line_length = off
 trim_trailing_whitespace = false
 
 # Web Files
@@ -58,6 +59,10 @@ end_of_line = crlf
 # Bash Files
 [*.sh]
 end_of_line = lf
+
+# TypeScript files
+[*.ts]
+quote_type = single
 
 ##########################################
 # .NET Language Conventions

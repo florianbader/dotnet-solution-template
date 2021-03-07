@@ -13,7 +13,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		..\SonarLint.xml = ..\SonarLint.xml
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Application", "Application\Application.csproj", "{D63A438C-FE46-4EDC-A30B-159479939A2D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Application", "Application\Application.csproj", "{D63A438C-FE46-4EDC-A30B-159479939A2D}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Website", "Website\Website.csproj", "{F14EFC7C-82E0-464A-B021-6A9D8B3ADC8F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -29,6 +31,10 @@ Global
 		{D63A438C-FE46-4EDC-A30B-159479939A2D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D63A438C-FE46-4EDC-A30B-159479939A2D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D63A438C-FE46-4EDC-A30B-159479939A2D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F14EFC7C-82E0-464A-B021-6A9D8B3ADC8F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F14EFC7C-82E0-464A-B021-6A9D8B3ADC8F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F14EFC7C-82E0-464A-B021-6A9D8B3ADC8F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F14EFC7C-82E0-464A-B021-6A9D8B3ADC8F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
