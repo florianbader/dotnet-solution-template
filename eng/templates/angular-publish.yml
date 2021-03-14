@@ -1,0 +1,95 @@
+parameters:
+  - name: BuildProject
+    type: string
+    default: ''
+
+  - name: ShouldTest
+    type: boolean
+    default: true
+
+  - name: ShouldLint
+    type: boolean
+    default: true
+
+  - name: ShouldPublish
+    type: boolean
+    default: true
+
+  - name: PublishCodeCoverage
+    type: boolean
+    default: true
+
+  - name: TestCoverageAssemblyFilter
+    type: string
+    default:
+
+  - name: TestCoverageFileFilter
+    type: string
+    default:
+
+  - name: TestCoverageClassFilter
+    type: string
+    default:
+
+  - name: PublishArtifactDirectory
+    type: string
+    default: $(Build.ArtifactStagingDirectory)/publish
+
+  - name: PublishArtifactName
+    type: string
+    default: Artifact
+
+steps:
+  - checkout: self
+    clean: true
+    persistCredentials: true
+
+  - task: Npm@1
+    displayName: Restore npm packages
+    # uncomment for internal feed
+    # feedsToUse: select
+    # vstsFeed: '<id>/<id>'
+    inputs:
+      command: custom
+      customCommand: ci --cache .npm
+      workingDir: $(BuildProject)
+
+  - ${{ if ne(parameters.ShouldTest, true) }}:
+      - script: npm run test -- --run-in-band --coverage --coverage-directory $(Agent.TempDirectory)/coverage/ --watch=false
+        displayName: Run Angular tests
+        workingDirectory: $(BuildProject)
+
+      - task: PublishTestResults@2
+        displayName: Publish Angular test results
+        inputs:
+          testResultsFormat: JUnit
+          testResultsFiles: '**/junit.xml'
+          testRunTitle: Unit Tests
+          searchFolder: $(BuildProject)
+
+  - ${{ if eq(parameters.PublishCodeCoverage, true) }}:
+      - script: dotnet tool restore
+        displayName: Restore tools
+
+      - script: reportgenerator -reports:$(Agent.TempDirectory)/coverage/**/coverage.cobertura.xml -targetdir:$(Agent.TempDirectory)/coverageReport/ -reporttypes:"Cobertura;HtmlInline_AzurePipelines" -assemblyfilters:"${{ parameters.TestCoverageAssemblyFilter }}" -classfilters:"${{ parameters.TestCoverageClassFilter }}" -filefilters:"${{ parameters.TestCoverageFileFilter }}"
+        displayName: Create code coverage report
+
+      - task: PublishCodeCoverageResults@1
+        displayName: Publish code coverage report
+        inputs:
+          codeCoverageTool: Cobertura
+          summaryFileLocation: $(Agent.TempDirectory)/coverageReport/Cobertura.xml
+          reportDirectory: $(Agent.TempDirectory)/coverageReport
+          failIfCoverageEmpty: false
+        env:
+          disable.coverage.autogenerate: true
+
+  - ${{ if ne(parameters.ShouldLint, true) }}:
+      - script: npm run lint
+        displayName: Run Angular linting
+        workingDirectory: $(BuildProject)
+
+  - ${{ if ne(parameters.ShouldPublish, true) }}:
+      - script: npm run publish
+        displayName: Build frontend
+        workingDirectory: $(BuildProject)

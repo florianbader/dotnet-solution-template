@@ -25,8 +25,6 @@ namespace WebApi
 
             app.UseSerilog();
 
-            app.UseStaticFiles();
-
             app.UseAuthentication();
 
             app.UseRouting();
@@ -35,8 +33,6 @@ namespace WebApi
 
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapDefaultControllerRoute();
-
                 endpoints.MapControllers();
 
                 if (env.IsProduction())
