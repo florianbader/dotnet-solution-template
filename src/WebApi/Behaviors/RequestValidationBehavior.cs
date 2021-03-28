@@ -3,7 +3,6 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Application;
-using Application.Exceptions;
 using FluentValidation;
 using MediatR;
 

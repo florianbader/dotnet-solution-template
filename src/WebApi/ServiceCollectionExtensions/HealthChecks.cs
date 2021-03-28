@@ -11,7 +11,7 @@ using Microsoft.Extensions.Diagnostics.HealthChecks;
 
 namespace WebApi
 {
-    public static class HealthChecksExtensions
+    public static class HealthChecks
     {
         public static void AddConnectHealthChecks(this IServiceCollection serviceCollection)
             => serviceCollection.AddHealthChecks();

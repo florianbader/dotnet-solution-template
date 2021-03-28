@@ -11,6 +11,8 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "lint": "ng lint",
+    "generate-openapi": "openapi-generator-cli generate -g typescript-angular -i http://localhost:5000/swagger/v1/swagger.json -o src/app/shared/services/api --additional-properties ngVersion=11.0.0",
+    "openapi-generator": "openapi-generator-cli",
     "docs:json": "compodoc -p ./tsconfig.json -e json -d .",
     "storybook": "npm run docs:json && start-storybook -p 6006",
     "build-storybook": "npm run docs:json && build-storybook"
@@ -49,6 +51,7 @@
     "@babel/core": "^7.13.10",
     "@compodoc/compodoc": "^1.1.11",
     "@ngxs/devtools-plugin": "^3.7.1",
+    "@openapitools/openapi-generator-cli": "^2.1.22",
     "@storybook/addon-actions": "^6.1.21",
     "@storybook/addon-essentials": "^6.1.21",
     "@storybook/addon-links": "^6.1.21",

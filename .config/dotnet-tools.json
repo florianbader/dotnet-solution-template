@@ -7,6 +7,12 @@
       "commands": [
         "reportgenerator"
       ]
+    },
+    "dotnet-ef": {
+      "version": "5.0.4",
+      "commands": [
+        "dotnet-ef"
+      ]
     }
   }
 }

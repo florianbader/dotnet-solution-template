@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using System.Net;
 using Application;
-using Application.Exceptions;
 using Hellang.Middleware.ProblemDetails;
 
 namespace WebApi

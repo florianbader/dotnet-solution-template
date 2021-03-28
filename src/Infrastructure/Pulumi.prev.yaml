@@ -1,0 +1,20 @@
+encryptionsalt: v1:bmoi4OiF6ps=:v1:ebLfkjFGC3g1qlrG:TdaNQBflGHBbjNb8cpfSLYLtUgZXHA==
+config:
+  appservice:size: B1
+  appservice:tier: Basic
+  azure-native:environment: public
+  azure-native:location: WestEurope
+  azure:environment: prev
+  azureactivedirectory:clientid: 00000000-0000-0000-0000-000000000000
+  azureactivedirectory:domain: <aad>.onmicrosoft.com
+  azureactivedirectory:tenantId: 00000000-0000-0000-0000-000000000000
+  containerregistry:sku: Basic
+  iothub:name: S1
+  keyvault:sku: standard
+  project:productName: webapi
+  project:tenantId: 1f724501-4ae7-4ed7-820a-d296c587d078
+  servicebus:sku: basic
+  sqlserver:edition: Basic
+  sqlserver:password:
+    secure: v1:6AKmbvo4hwZOSGt2:VO4/yMVEJdd4j4xI7PZCNNzaZJ0UdAjfoQMSGeVWJyZO/Vyexq4=
+  sqlserver:serviceObjectiveName: Basic

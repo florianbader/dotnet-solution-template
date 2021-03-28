@@ -1,17 +1,31 @@
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Application.Database;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace Application.Features.Todo
 {
-    public static class GetAllTodo
+    public class GetAllTodo
     {
         public class Handler : IRequestHandler<Query, IEnumerable<Todo>>
         {
-            public Task<IEnumerable<Todo>> Handle(Query request, CancellationToken cancellationToken)
-                => Task.FromResult(new[] { new Todo("id", "name", false) }.AsEnumerable());
+            private readonly ApplicationDbContext _applicationDbContext;
+            private readonly ILogger<GetAllTodo> _logger;
+
+            public Handler(ApplicationDbContext applicationDbContext, ILogger<GetAllTodo> logger)
+                => (_applicationDbContext, _logger) = (applicationDbContext, logger);
+
+            public async Task<IEnumerable<Todo>> Handle(Query request, CancellationToken cancellationToken)
+            {
+                _logger.LogTrace("Getting todos");
+
+                var entities = await _applicationDbContext.Todo
+                    .ToArrayAsync(cancellationToken);
+                return entities;
+            }
         }
 
         public record Query() : IRequest<IEnumerable<Todo>>;

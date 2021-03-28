@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Application.Exceptions
+namespace Application
 {
     public class InvalidInputException : Exception
     {

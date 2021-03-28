@@ -5,6 +5,7 @@ import { NgxsModule } from '@ngxs/store';
 import { environment } from 'src/environments/environment';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
+import { ApiModule, Configuration } from './shared/services/api';
 import { SharedModule } from './shared/shared.module';
 
 @NgModule({
@@ -12,6 +13,12 @@ import { SharedModule } from './shared/shared.module';
   imports: [
     BrowserModule,
     AppRoutingModule,
+    ApiModule.forRoot(
+      () =>
+        new Configuration({
+          basePath: environment.basePath,
+        })
+    ),
     SharedModule.forRoot(),
     NgxsModule.forRoot([], {
       developmentMode: !environment.production,

@@ -4,7 +4,7 @@ using WebApi.Diagnostics;
 
 namespace WebApi
 {
-    public static class SerilogExtensions
+    public static class Serilog
     {
         public static IApplicationBuilder UseSerilog(this IApplicationBuilder app)
             => app.UseMiddleware<SerilogExceptionMiddleware>()
