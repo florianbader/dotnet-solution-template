@@ -1,10 +1,10 @@
 stages:
   - template: ../templates/deployment/locations-deployment.yml
     parameters:
+      dependsOn: Build
       environments:
         dev:
           name: development
-          dependsOn: Build
           locations:
             euw: West Europe
           jobs:

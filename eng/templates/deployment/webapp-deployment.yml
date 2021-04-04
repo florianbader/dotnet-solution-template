@@ -26,7 +26,6 @@ parameters:
 jobs:
   - job: Deployment_WebApp_${{ parameters.environment.key }}_${{ parameters.location.key }}
     displayName: Deployment Web App ${{ parameters.environment.name }} ${{ parameters.location.name }}
-
     steps:
       - task: ArchiveFiles@2
         displayName: Archive web app

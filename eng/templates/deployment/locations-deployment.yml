@@ -1,10 +1,13 @@
 parameters:
+  - name: dependsOn
+    type: string
+    default: Build
+
   - name: environments
     type: object
     default:
       dev:
         name: Development
-        dependsOn: Build
         locations:
           euw: West Europe
         jobs: []
@@ -26,8 +29,10 @@ stages:
       - ${{ each loc in env.value.locations }}:
           - stage: ${{ env.key }}_${{ loc.key }}
             displayName: ${{ env.value.name }} ${{ loc.value }}
-            ${{ if env.value.dependsOn }}:
+            ${{ if ne(env.value.dependsOn, '') }}:
               dependsOn: ${{ env.value.dependsOn }}_${{ loc.key }}
+            ${{ if eq(env.value.dependsOn, '') }}:
+              dependsOn: ${{ parameters.dependsOn }}
             variables:
               environment: ${{ env.key }}
               environmentName: ${{ env.value.name }}
