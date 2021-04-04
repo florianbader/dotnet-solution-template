@@ -1,0 +1,141 @@
+parameters:
+  - name: installSDK
+    type: boolean
+    default: true
+
+  - name: buildProjects
+    type: string
+    default: ''
+
+  - name: testProjects
+    type: string
+    default: '**/*Tests.csproj'
+
+  - name: publishProjects
+    type: string
+
+  - name: testsFilter
+    type: string
+    default: 'Category!=Integration'
+
+  - name: publishCodeCoverage
+    type: boolean
+    default: true
+
+  - name: testCoverageAssemblyFilter
+    type: string
+    default:
+
+  - name: testCoverageFileFilter
+    type: string
+    default:
+
+  - name: testCoverageClassFilter
+    type: string
+    default:
+
+  - name: buildConfiguration
+    type: string
+    default: Release
+
+  - name: version
+    type: string
+    default: $(Version)
+
+  - name: restoreAdditionalArguments
+    type: string
+    default: ''
+
+  - name: buildAdditionalArguments
+    type: string
+    default: ''
+
+  - name: testAdditionalArguments
+    type: string
+    default: ''
+
+  - name: publishAdditionalArguments
+    type: string
+    default: --no-build
+
+  - name: publishArtifactName
+    type: string
+    default: Artifact
+
+steps:
+  - checkout: self
+    clean: true
+    persistCredentials: true
+
+  - ${{ if eq(parameters.installSDK, true) }}:
+      - task: UseDotNet@2
+        displayName: Install .NET Core SDK
+        inputs:
+          useGlobalJson: true
+
+  - task: DotNetCoreCLI@2
+    displayName: Restore projects
+    inputs:
+      command: restore
+      arguments: ${{ parameters.restoreAdditionalArguments }}
+      # uncomment for internal feed
+      # feedsToUse: select
+      # vstsFeed: '<id>/<id>'
+      projects: |
+        ${{ parameters.buildProjects }}
+        ${{ parameters.testProjects }}
+        ${{ parameters.publishProjects }}
+
+  - task: DotNetCoreCLI@2
+    displayName: Build projects
+    inputs:
+      command: build
+      arguments: -c ${{ parameters.buildConfiguration }} --no-restore /p:Version="${{ parameters.version }}" ${{ parameters.buildAdditionalArguments }}
+      projects: |
+        ${{ parameters.buildProjects }}
+        ${{ parameters.testProjects }}
+        ${{ parameters.publishProjects }}
+
+  - ${{ if ne(parameters.testProjects, '') }}:
+      - task: DotNetCoreCLI@2
+        displayName: Run unit tests
+        inputs:
+          command: test
+          arguments: -c ${{ parameters.buildConfiguration }} --no-build --filter ${{ parameters.testsFilter }} /p:CollectCoverage /p:CoverletOutputFormat=cobertura /p:CoverletOutput=$(Agent.TempDirectory)/coverage /p:SkipAutoProps=true /p:ExcludeByAttribute="Obsolete%2cGeneratedCodeAttribute%2cCompilerGeneratedAttribute" ${{ parameters.testAdditionalArguments }}
+          testRunTitle: Unit Tests
+          publishTestResults: true
+          projects: |
+            ${{ parameters.testProjects }}
+
+  - ? ${{ if and(eq(parameters.publishCodeCoverage, true), ne(parameters.testProjects, '')) }}
+    : - script: dotnet tool restore
+        displayName: Restore tools
+
+      - script: reportgenerator -reports:$(Agent.TempDirectory)/coverage/**/coverage.cobertura.xml -targetdir:$(Agent.TempDirectory)/coverageReport/ -reporttypes:"Cobertura;HtmlInline_AzurePipelines" -assemblyfilters:"${{ parameters.testCoverageAssemblyFilter }}" -classfilters:"${{ parameters.testCoverageClassFilter }}" -filefilters:"${{ parameters.testCoverageFileFilter }}"
+        displayName: Create code coverage report
+
+      - task: PublishCodeCoverageResults@1
+        displayName: Publish code coverage report
+        inputs:
+          codeCoverageTool: Cobertura
+          summaryFileLocation: $(Agent.TempDirectory)/coverageReport/Cobertura.xml
+          reportDirectory: $(Agent.TempDirectory)/coverageReport
+          failIfCoverageEmpty: false
+        env:
+          disable.coverage.autogenerate: true
+
+  - ${{ if ne(parameters.publishProjects, '') }}:
+      - task: DotNetCoreCLI@2
+        displayName: Publish solution
+        inputs:
+          command: publish
+          modifyOutputPath: false
+          zipAfterPublish: false
+          publishWebProjects: false
+          arguments: -c ${{ parameters.buildConfiguration }} -o $(Build.ArtifactStagingDirectory)/${{ parameters.publishArtifactName }} ${{ parameters.publishAdditionalArguments }}
+          projects: |
+            ${{ parameters.publishProjects }}
+
+      - upload: $(Build.ArtifactStagingDirectory)/${{ parameters.publishArtifactName }}
+        artifact: ${{ parameters.publishArtifactName }}
+        displayName: Publish artifact

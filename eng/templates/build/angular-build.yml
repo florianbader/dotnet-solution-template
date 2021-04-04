@@ -1,41 +1,37 @@
 parameters:
-  - name: BuildProject
+  - name: buildProject
     type: string
     default: ''
 
-  - name: ShouldTest
+  - name: shouldTest
     type: boolean
     default: true
 
-  - name: ShouldLint
+  - name: shouldLint
     type: boolean
     default: true
 
-  - name: ShouldPublish
+  - name: shouldPublish
     type: boolean
     default: true
 
-  - name: PublishCodeCoverage
+  - name: publishCodeCoverage
     type: boolean
     default: true
 
-  - name: TestCoverageAssemblyFilter
+  - name: testCoverageAssemblyFilter
     type: string
     default:
 
-  - name: TestCoverageFileFilter
+  - name: testCoverageFileFilter
     type: string
     default:
 
-  - name: TestCoverageClassFilter
+  - name: testCoverageClassFilter
     type: string
     default:
 
-  - name: PublishArtifactDirectory
-    type: string
-    default: $(Build.ArtifactStagingDirectory)/publish
-
-  - name: PublishArtifactName
+  - name: publishArtifactName
     type: string
     default: Artifact
 
@@ -54,9 +50,9 @@ steps:
       customCommand: ci --cache .npm
       workingDir: $(BuildProject)
 
-  - ${{ if ne(parameters.ShouldTest, true) }}:
+  - ${{ if ne(parameters.shouldTest, true) }}:
       - script: npm run test -- --run-in-band --coverage --coverage-directory $(Agent.TempDirectory)/coverage/ --watch=false
-        displayName: Run Angular tests
+        displayName: Run tests
         workingDirectory: $(BuildProject)
 
       - task: PublishTestResults@2
@@ -67,11 +63,11 @@ steps:
           testRunTitle: Unit Tests
           searchFolder: $(BuildProject)
 
-  - ${{ if eq(parameters.PublishCodeCoverage, true) }}:
+  - ${{ if eq(parameters.publishCodeCoverage, true) }}:
       - script: dotnet tool restore
         displayName: Restore tools
 
-      - script: reportgenerator -reports:$(Agent.TempDirectory)/coverage/**/coverage.cobertura.xml -targetdir:$(Agent.TempDirectory)/coverageReport/ -reporttypes:"Cobertura;HtmlInline_AzurePipelines" -assemblyfilters:"${{ parameters.TestCoverageAssemblyFilter }}" -classfilters:"${{ parameters.TestCoverageClassFilter }}" -filefilters:"${{ parameters.TestCoverageFileFilter }}"
+      - script: reportgenerator -reports:$(Agent.TempDirectory)/coverage/**/coverage.cobertura.xml -targetdir:$(Agent.TempDirectory)/coverageReport/ -reporttypes:"Cobertura;HtmlInline_AzurePipelines" -assemblyfilters:"${{ parameters.testCoverageAssemblyFilter }}" -classfilters:"${{ parameters.testCoverageClassFilter }}" -filefilters:"${{ parameters.testCoverageFileFilter }}"
         displayName: Create code coverage report
 
       - task: PublishCodeCoverageResults@1
@@ -84,12 +80,16 @@ steps:
         env:
           disable.coverage.autogenerate: true
 
-  - ${{ if ne(parameters.ShouldLint, true) }}:
+  - ${{ if ne(parameters.shouldLint, true) }}:
       - script: npm run lint
-        displayName: Run Angular linting
+        displayName: Run linting
         workingDirectory: $(BuildProject)
 
-  - ${{ if ne(parameters.ShouldPublish, true) }}:
+  - ${{ if ne(parameters.shouldPublish, true) }}:
       - script: npm run publish
-        displayName: Build frontend
+        displayName: Publish app
         workingDirectory: $(BuildProject)
+
+      - upload: ${{ parameters.buildProject }}/dist
+        artifact: ${{ parameters.publishArtifactName }}
+        displayName: Publish artifact

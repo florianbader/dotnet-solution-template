@@ -1,0 +1,11 @@
+jobs:
+  - job: Build_WebApi
+    displayName: Build Web API
+    workspace:
+      clean: all
+    steps:
+      - template: ../../templates/dotnet-build.yml
+        parameters:
+          buildProjects: 'src/WebApi/*.csproj'
+          publishProjects: 'src/WebApi/*.csproj'
+          publishArtifactName: WebApi

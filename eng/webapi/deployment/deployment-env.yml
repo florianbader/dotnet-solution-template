@@ -1,0 +1,13 @@
+jobs:
+  - template: ../templates/deployment/webapp-deployment.yml
+    parameters:
+      azureSubscriptionName: $(azureSubscriptionName)
+      azureProductName: $(azureProductName)
+      environment:
+        key: $(environment)
+        name: $(environmentName)
+      location:
+        key: $(location)
+        name: $(locationName)
+      artifact:
+        name: WebApi

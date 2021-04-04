@@ -4,8 +4,8 @@ trigger: none
 variables:
   - template: ../templates/version.yml
     parameters:
-      Major: 1
-      Minor: 0
+      major: 1
+      minor: 0
 
 name: $(Version)
 

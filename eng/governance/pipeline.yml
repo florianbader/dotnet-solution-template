@@ -7,13 +7,13 @@ schedules:
     always: true
 
 jobs:
-  - job: Backend
+  - job: WebApi
     steps:
-      - template: ../templates/dotnet-publish.yml
+      - template: ../templates/dotnet-build.yml
         parameters:
-          BuildProjects: src/Solution.sln
-          TestProjects: '' # remove this if you also want to run your tests in the nightly
-          Version: '1.0.0'
+          buildProjects: src/Solution.sln
+          testProjects: '' # remove this if you also want to run your tests in the nightly
+          version: '1.0.0'
 
       - script: dotnet list .\src\ package --outdated
         displayName: Show outdated versions
@@ -21,12 +21,12 @@ jobs:
       - script: dotnet list .\src\ package --vulnerable
         displayName: Show vulnerabilities
 
-  - job: Frontend
+  - job: Websites
     steps:
       - script: npm outdated
         displayName: Show outdated versions
-        workingDirectory: src/Frontend
+        workingDirectory: src/Website
 
       - script: npm audit --audit-level=moderate
         displayName: Show vulnerabilities
-        workingDirectory: src/Frontend
+        workingDirectory: src/Website

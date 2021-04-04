@@ -1,6 +1,6 @@
 variables:
-  - name: AzureSubscriptionName
+  - name: azureSubscriptionName
     value: Azure
 
-  - name: AzureProductName
+  - name: azureProductName
     value: webapi

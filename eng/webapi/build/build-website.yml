@@ -1,0 +1,10 @@
+jobs:
+  - job: Build_Website
+    displayName: Build website
+    workspace:
+      clean: all
+    steps:
+      - template: ../../templates/angular-build.yml
+        parameters:
+          buildProject: src/Website/
+          publishArtifactName: Website

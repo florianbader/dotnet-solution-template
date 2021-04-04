@@ -1,0 +1,26 @@
+stages:
+  - template: ../templates/locations-deployment.yml
+    parameters:
+      environments:
+        dev:
+          name: development
+          locations:
+            euw: West Europe
+          jobs:
+            - template: deployment/deployment-env.yml
+
+        prev:
+          name: preview
+          dependsOn: dev
+          locations:
+            euw: West Europe
+          jobs:
+            - template: deployment/deployment-env.yml
+
+        prod:
+          name: production
+          dependsOn: prev
+          locations:
+            euw: West Europe
+          jobs:
+            - template: deployment/deployment-env.yml

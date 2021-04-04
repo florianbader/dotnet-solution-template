@@ -1,0 +1,31 @@
+parameters:
+  - name: azureSubscriptionName
+    type: string
+
+  - name: environment
+    type: string
+
+steps:
+  - template: dotnet-build.yml
+    parameters:
+      buildProjects: src/Infrastructure/*.csproj
+      testProjects: ''
+
+  - task: Pulumi@1
+    displayName: Publish infrastructure
+    inputs:
+      azureSubscription: ${{ parameters.azureSubscriptionName }}
+      command: up
+      loginArgs: azblob://state
+      cwd: src/Infrastructure
+      stack: ${{ parameters.environment }}
+      args: --yes --skip-preview
+
+  - task: AzureCLI@2
+    displayName: Execute post deployment script
+    inputs:
+      azureSubscription: ${{ parameters.azureSubscriptionName }}
+      scriptType: pscore
+      scriptLocation: scriptPath
+      scriptPath: src/Infrastructure/Scripts/post-deployment.ps1
+      arguments: -env ${{ parameters.environment }}

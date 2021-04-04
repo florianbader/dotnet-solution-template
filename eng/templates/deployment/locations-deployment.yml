@@ -1,0 +1,50 @@
+parameters:
+  - name: environments
+    type: object
+    default:
+      dev:
+        name: Development
+        locations:
+          euw: West Europe
+        jobs: []
+      prev:
+        name: Preview
+        dependsOn: dev
+        locations:
+          euw: West Europe
+        jobs: []
+      prod:
+        name: Production
+        dependsOn: prev
+        locations:
+          euw: West Europe
+        jobs: []
+
+stages:
+  - ${{ each env in parameters.environments }}:
+      - ${{ each loc in env.value.Locations }}:
+          - stage: ${{ env.key }}_${{ loc.key }}
+            displayName: ${{ env.value.Name }} ${{ loc.value }}
+            ${{ if env.value.dependsOn }}:
+              dependsOn: ${{ env.value.dependsOn }}_${{ loc.key }}
+            variables:
+              environment: ${{ env.key }}
+              environmentName: ${{ env.value.name }}
+              location: ${{ loc.key }}
+              locationName: ${{ loc.value }}
+            jobs:
+              - ${{ each job in parameters.jobs }}:
+                  - deployment: Deployment_${{ env.key }}_${{ loc.key }}
+                    displayName: Deployment ${{ env.value.Name }} ${{ loc.value }}
+                    workspace:
+                      clean: all
+                    # use a different environment for resource triggers so we can have different approvals
+                    ${{ if eq(variables['Build.Reason'], 'ResourceTrigger') }}:
+                      environment: Deployment_PullRequest_${{ env.key }}_{{ loc.key }}
+                    ${{ if ne(variables['Build.Reason'], 'ResourceTrigger') }}:
+                      environment: Deployment_${{ env.key }}_{{ loc.key }}
+                    strategy:
+                      runOnce:
+                        deploy:
+                          steps:
+                            - ${{ job.steps }}
