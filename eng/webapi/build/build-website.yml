@@ -1,3 +1,8 @@
+parameters:
+  - name: shouldTest
+    type: boolean
+    default: true
+
 jobs:
   - job: Build_Website
     displayName: Build website
@@ -8,3 +13,4 @@ jobs:
         parameters:
           buildProject: src/Website/
           publishArtifactName: Website
+          shouldTest: ${{ parameters.shouldTest }}

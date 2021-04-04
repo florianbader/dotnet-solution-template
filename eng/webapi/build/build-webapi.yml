@@ -1,3 +1,8 @@
+parameters:
+  - name: shouldTest
+    type: boolean
+    default: true
+
 jobs:
   - job: Build_WebApi
     displayName: Build Web API
@@ -9,3 +14,4 @@ jobs:
           buildProjects: 'src/WebApi/*.csproj'
           publishProjects: 'src/WebApi/*.csproj'
           publishArtifactName: WebApi
+          shouldTest: ${{ parameters.shouldTest }}

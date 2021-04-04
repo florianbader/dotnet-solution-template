@@ -22,9 +22,17 @@ resources:
         stages:
           - Build
 
+parameters:
+  - name: shouldTest
+    displayName: Should run unit tests?
+    type: boolean
+    default: true
+
 name: $(Version)
 
 stages:
   - template: build.yml
+    parameters:
+      shouldTest: ${{ parameters.shouldTest }}
 
   - template: deployment.yml

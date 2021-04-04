@@ -7,6 +7,10 @@ parameters:
     type: string
     default: ''
 
+  - name: shouldTest
+    type: boolean
+    default: true
+
   - name: testProjects
     type: string
     default: '**/*Tests.csproj'
@@ -96,7 +100,7 @@ steps:
         ${{ parameters.testProjects }}
         ${{ parameters.publishProjects }}
 
-  - ${{ if ne(parameters.testProjects, '') }}:
+  - ${{ if and(eq(parameters.shouldTest, true), ne(parameters.testProjects, '')) }}:
       - task: DotNetCoreCLI@2
         displayName: Run unit tests
         inputs:
@@ -107,22 +111,22 @@ steps:
           projects: |
             ${{ parameters.testProjects }}
 
-  - ? ${{ if and(eq(parameters.publishCodeCoverage, true), ne(parameters.testProjects, '')) }}
-    : - script: dotnet tool restore
-        displayName: Restore tools
+  - ${{ if and(eq(parameters.shouldTest, true), eq(parameters.publishCodeCoverage, true), ne(parameters.testProjects, '')) }}:
+    - script: dotnet tool restore
+      displayName: Restore tools
 
-      - script: reportgenerator -reports:$(Agent.TempDirectory)/coverage/**/coverage.cobertura.xml -targetdir:$(Agent.TempDirectory)/coverageReport/ -reporttypes:"Cobertura;HtmlInline_AzurePipelines" -assemblyfilters:"${{ parameters.testCoverageAssemblyFilter }}" -classfilters:"${{ parameters.testCoverageClassFilter }}" -filefilters:"${{ parameters.testCoverageFileFilter }}"
-        displayName: Create code coverage report
+    - script: reportgenerator -reports:$(Agent.TempDirectory)/coverage/**/coverage.cobertura.xml -targetdir:$(Agent.TempDirectory)/coverageReport/ -reporttypes:"Cobertura;HtmlInline_AzurePipelines" -assemblyfilters:"${{ parameters.testCoverageAssemblyFilter }}" -classfilters:"${{ parameters.testCoverageClassFilter }}" -filefilters:"${{ parameters.testCoverageFileFilter }}"
+      displayName: Create code coverage report
 
-      - task: PublishCodeCoverageResults@1
-        displayName: Publish code coverage report
-        inputs:
-          codeCoverageTool: Cobertura
-          summaryFileLocation: $(Agent.TempDirectory)/coverageReport/Cobertura.xml
-          reportDirectory: $(Agent.TempDirectory)/coverageReport
-          failIfCoverageEmpty: false
-        env:
-          disable.coverage.autogenerate: true
+    - task: PublishCodeCoverageResults@1
+      displayName: Publish code coverage report
+      inputs:
+        codeCoverageTool: Cobertura
+        summaryFileLocation: $(Agent.TempDirectory)/coverageReport/Cobertura.xml
+        reportDirectory: $(Agent.TempDirectory)/coverageReport
+        failIfCoverageEmpty: false
+      env:
+        disable.coverage.autogenerate: true
 
   - ${{ if ne(parameters.publishProjects, '') }}:
       - task: DotNetCoreCLI@2

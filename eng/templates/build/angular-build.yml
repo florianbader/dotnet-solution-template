@@ -50,7 +50,7 @@ steps:
       customCommand: ci --cache .npm
       workingDir: $(BuildProject)
 
-  - ${{ if ne(parameters.shouldTest, true) }}:
+  - ${{ if eq(parameters.shouldTest, true) }}:
       - script: npm run test -- --run-in-band --coverage --coverage-directory $(Agent.TempDirectory)/coverage/ --watch=false
         displayName: Run tests
         workingDirectory: $(BuildProject)
