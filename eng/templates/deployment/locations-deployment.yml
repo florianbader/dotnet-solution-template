@@ -4,6 +4,7 @@ parameters:
     default:
       dev:
         name: Development
+        dependsOn: Build
         locations:
           euw: West Europe
         jobs: []
