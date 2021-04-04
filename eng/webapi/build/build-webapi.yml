@@ -9,7 +9,7 @@ jobs:
     workspace:
       clean: all
     steps:
-      - template: ../../templates/dotnet-build.yml
+      - template: ../../templates/build/dotnet-build.yml
         parameters:
           buildProjects: 'src/WebApi/*.csproj'
           publishProjects: 'src/WebApi/*.csproj'
