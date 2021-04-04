@@ -1,5 +1,5 @@
 stages:
-  - template: ../templates/locations-deployment.yml
+  - template: ../templates/deployment/locations-deployment.yml
     parameters:
       environments:
         dev:
