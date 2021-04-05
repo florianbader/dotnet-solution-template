@@ -35,8 +35,14 @@ artifacts/
 [Oo]bj/
 [Oo]ut/
 [Tt]estResults/
+[Cc]overage/
+[Cc]overageReport/
 
 config/
 .env
 
 node_modules/
+
+JUnit.xml
+coverage.cobertura.xml
+Cobertura.xml
