@@ -3,6 +3,9 @@ parameters:
     type: string
     default: Build
 
+  - name: deploymentJobs
+    type: deploymentList
+
   - name: environments
     type: object
     default:
@@ -47,7 +50,7 @@ stages:
                 value: ${{ loc.value }}
               - template: /eng/templates/azure-variables.yml
             jobs:
-              - ${{ each job in env.value.deploymentJobs }}:
+              - ${{ each job in parameters.deploymentJobs }}:
                   - deployment: ${{ job.deployment }}_${{ env.key }}_${{ loc.key }}
                     displayName: ${{ job.displayName }} ${{ env.value.name }} ${{ loc.value }}
                     workspace:
@@ -57,16 +60,18 @@ stages:
                       environment: Deployment_PullRequest_${{ env.key }}_${{ loc.key }}
                     ${{ if ne(variables['Build.Reason'], 'ResourceTrigger') }}:
                       environment: Deployment_${{ env.key }}_${{ loc.key }}
-                    strategy: ${{ job.strategy }}
+                    ${{ each pair in job }}:
+                      ? ${{ if and(ne(pair.key, 'dependsOn'), ne(pair.key, 'displayName')) }}
+                      : ${{ pair.key }}: ${{ pair.value }}
                     # ${{ each pair in job }}:
                     #   ${{ if and(ne(pair.key, 'workspace'), ne(pair.key, 'displayName'), ne(pair.key, 'environment')) }}:
                     #     ${{ pair.key }}: ${{ pair.value }}
-              - ${{ each job in env.value.jobs }}:
-                  - job: ${{ job.key }}_${{ env.key }}_${{ loc.key }}
-                    displayName: ${{ job.displayName }} ${{ env.value.name }} ${{ loc.value }}
-                    # ${{ each pair in job }}:
-                    #   ${{ if and(ne(pair.key, 'dependsOn'), ne(pair.key, 'displayName')) }}:
-                    #     ${{ pair.key }}: ${{ pair.value }}
-                    dependsOn:
-                      - ${{ if job.dependsOn }}:
-                          - ${{ format('{0}_{1}_{2}', job.dependsOn, env.key, loc.key) }}
+              # - ${{ each job in env.value.jobs }}:
+              #     - job: ${{ job.key }}_${{ env.key }}_${{ loc.key }}
+              #       displayName: ${{ job.displayName }} ${{ env.value.name }} ${{ loc.value }}
+              #       # ${{ each pair in job }}:
+              #       #   ${{ if and(ne(pair.key, 'dependsOn'), ne(pair.key, 'displayName')) }}:
+              #       #     ${{ pair.key }}: ${{ pair.value }}
+              #       dependsOn:
+              #         - ${{ if job.dependsOn }}:
+              #             - ${{ format('{0}_{1}_{2}', job.dependsOn, env.key, loc.key) }}
