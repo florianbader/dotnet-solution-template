@@ -3,9 +3,6 @@ parameters:
     type: string
     default: Build
 
-  - name: deploymentJobs
-    type: deploymentList
-
   - name: environments
     type: object
     default:
@@ -14,21 +11,18 @@ parameters:
         locations:
           euw: West Europe
         jobs: []
-        deploymentJobs: []
       prev:
         name: Preview
         dependsOn: dev
         locations:
           euw: West Europe
         jobs: []
-        deploymentJobs: []
       prod:
         name: Production
         dependsOn: prev
         locations:
           euw: West Europe
         jobs: []
-        deploymentJobs: []
 
 stages:
   - ${{ each env in parameters.environments }}:
@@ -50,22 +44,23 @@ stages:
                 value: ${{ loc.value }}
               - template: /eng/templates/azure-variables.yml
             jobs:
-              - ${{ each job in parameters.deploymentJobs }}:
-                  - deployment: ${{ job.deployment }}_${{ env.key }}_${{ loc.key }}
-                    displayName: ${{ job.displayName }} ${{ env.value.name }} ${{ loc.value }}
-                    workspace:
-                      clean: all
-                    # use a different environment for resource triggers so we can have different approvals
-                    ${{ if eq(variables['Build.Reason'], 'ResourceTrigger') }}:
-                      environment: Deployment_PullRequest_${{ env.key }}_${{ loc.key }}
-                    ${{ if ne(variables['Build.Reason'], 'ResourceTrigger') }}:
-                      environment: Deployment_${{ env.key }}_${{ loc.key }}
-                    ${{ each pair in job }}:
-                      ${{ if and(ne(pair.key, 'dependsOn'), ne(pair.key, 'displayName')) }}:
-                        ${{ pair.key }}: ${{ pair.value }}
-                    # ${{ each pair in job }}:
-                    #   ${{ if and(ne(pair.key, 'workspace'), ne(pair.key, 'displayName'), ne(pair.key, 'environment')) }}:
-                    #     ${{ pair.key }}: ${{ pair.value }}
+              - ${{ parameters.jobs }}
+
+                # - deployment: ${{ job.deployment }}_${{ env.key }}_${{ loc.key }}
+                #   displayName: ${{ job.displayName }} ${{ env.value.name }} ${{ loc.value }}
+                #   workspace:
+                #     clean: all
+                #   # use a different environment for resource triggers so we can have different approvals
+                #   ${{ if eq(variables['Build.Reason'], 'ResourceTrigger') }}:
+                #     environment: Deployment_PullRequest_${{ env.key }}_${{ loc.key }}
+                #   ${{ if ne(variables['Build.Reason'], 'ResourceTrigger') }}:
+                #     environment: Deployment_${{ env.key }}_${{ loc.key }}
+                #   ${{ each pair in job }}:
+                #     ${{ if and(ne(pair.key, 'dependsOn'), ne(pair.key, 'displayName')) }}:
+                #       ${{ pair.key }}: ${{ pair.value }}
+                # ${{ each pair in job }}:
+                #   ${{ if and(ne(pair.key, 'workspace'), ne(pair.key, 'displayName'), ne(pair.key, 'environment')) }}:
+                #     ${{ pair.key }}: ${{ pair.value }}
               # - ${{ each job in env.value.jobs }}:
               #     - job: ${{ job.key }}_${{ env.key }}_${{ loc.key }}
               #       displayName: ${{ job.displayName }} ${{ env.value.name }} ${{ loc.value }}
