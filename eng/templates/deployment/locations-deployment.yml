@@ -48,7 +48,7 @@ stages:
               - template: /eng/templates/azure-variables.yml
             jobs:
               - ${{ each job in env.value.deploymentJobs }}:
-                  - deployment: ${{ job.key }}_${{ env.key }}_${{ loc.key }}
+                  - deployment: ${{ job.job }}_${{ env.key }}_${{ loc.key }}
                     displayName: ${{ job.displayName }} ${{ env.value.name }} ${{ loc.value }}
                     workspace:
                       clean: all
