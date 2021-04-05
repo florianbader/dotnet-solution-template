@@ -2,8 +2,6 @@ stages:
   - template: /eng/templates/deployment/locations-deployment.yml
     parameters:
       dependsOn: Build
-      deploymentJobs:
-        - template: /eng/webapi/deployment/deployment-env.yml
       environments:
         dev:
           name: Development
