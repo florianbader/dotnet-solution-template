@@ -46,9 +46,9 @@ stages:
                   clean: all
                 # use a different environment for resource triggers so we can have different approvals
                 ${{ if eq(variables['Build.Reason'], 'ResourceTrigger') }}:
-                  environment: Deployment_PullRequest_${{ env.key }}_{{ loc.key }}
+                  environment: Deployment_PullRequest_${{ env.key }}_${{ loc.key }}
                 ${{ if ne(variables['Build.Reason'], 'ResourceTrigger') }}:
-                  environment: Deployment_${{ env.key }}_{{ loc.key }}
+                  environment: Deployment_${{ env.key }}_${{ loc.key }}
                 strategy:
                   runOnce:
                     deploy:
