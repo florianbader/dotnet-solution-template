@@ -26,7 +26,7 @@ namespace Infrastructure.Resources
             => new (string Key, Output<string>? Value)[]
             {
                 (Key: "IoTHubConnectionString", Value: ConnectionString),
-                (Key: "EventHubConnectionString", Value: _iotHub?.Properties.Apply(p => p.EventHubEndpoints.First().Value.Endpoint)),
+                (Key: "EventHubConnectionString", Value: _iotHub!.Properties.Apply(p => p.EventHubEndpoints!.First().Value.Endpoint)),
             };
 
         public void Build()

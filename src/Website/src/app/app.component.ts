@@ -17,7 +17,7 @@ export class AppComponent implements OnInit {
     translate.use('en');
   }
 
-  public ngOnInit() {
+  public ngOnInit(): void {
     this.todos$ = this.todoService.apiTodoGet();
   }
 }
