@@ -52,12 +52,12 @@ steps:
     inputs:
       command: custom
       customCommand: ci --cache .npm
-      workingDir: $(BuildProject)
+      workingDir: ${{ parameters.buildProject }}
 
   - ${{ if eq(parameters.shouldTest, true) }}:
       - script: npm run test -- --run-in-band --coverage --coverage-directory $(Agent.TempDirectory)/coverage/ --watch=false
         displayName: Run tests
-        workingDirectory: $(BuildProject)
+        workingDirectory: ${{ parameters.buildProject }}
 
       - task: PublishTestResults@2
         displayName: Publish Angular test results
@@ -65,7 +65,7 @@ steps:
           testResultsFormat: JUnit
           testResultsFiles: '**/junit.xml'
           testRunTitle: Unit Tests
-          searchFolder: $(BuildProject)
+          searchFolder: ${{ parameters.buildProject }}
 
   - ${{ if eq(parameters.publishCodeCoverage, true) }}:
       - script: dotnet tool restore
@@ -87,12 +87,12 @@ steps:
   - ${{ if ne(parameters.shouldLint, true) }}:
       - script: npm run lint
         displayName: Run linting
-        workingDirectory: $(BuildProject)
+        workingDirectory: ${{ parameters.buildProject }}
 
   - ${{ if ne(parameters.shouldPublish, true) }}:
       - script: npm run publish
         displayName: Publish app
-        workingDirectory: $(BuildProject)
+        workingDirectory: ${{ parameters.buildProject }}
 
       - upload: ${{ parameters.buildProject }}/dist
         artifact: ${{ parameters.publishArtifactName }}
