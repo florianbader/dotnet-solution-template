@@ -39,19 +39,18 @@ stages:
               location: ${{ loc.key }}
               locationName: ${{ loc.value }}
             jobs:
-              # - ${{ each job in parameters.jobs }}:
-              - deployment: Deployment_${{ env.key }}_${{ loc.key }}
-                displayName: Deployment ${{ env.value.name }} ${{ loc.value }}
-                workspace:
-                  clean: all
-                # use a different environment for resource triggers so we can have different approvals
-                ${{ if eq(variables['Build.Reason'], 'ResourceTrigger') }}:
-                  environment: Deployment_PullRequest_${{ env.key }}_${{ loc.key }}
-                ${{ if ne(variables['Build.Reason'], 'ResourceTrigger') }}:
-                  environment: Deployment_${{ env.key }}_${{ loc.key }}
-                strategy:
-                  runOnce:
-                    deploy:
-                      steps:
-                        # - ${{ job.steps }}
-                        - script: echo 'test'
+              - ${{ each job in parameters.jobs }}:
+                  - deployment: Deployment_${{ env.key }}_${{ loc.key }}
+                    displayName: Deployment ${{ env.value.name }} ${{ loc.value }}
+                    workspace:
+                      clean: all
+                    # use a different environment for resource triggers so we can have different approvals
+                    ${{ if eq(variables['Build.Reason'], 'ResourceTrigger') }}:
+                      environment: Deployment_PullRequest_${{ env.key }}_${{ loc.key }}
+                    ${{ if ne(variables['Build.Reason'], 'ResourceTrigger') }}:
+                      environment: Deployment_${{ env.key }}_${{ loc.key }}
+                    strategy:
+                      runOnce:
+                        deploy:
+                          steps:
+                            - ${{ job.steps }}

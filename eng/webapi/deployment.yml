@@ -4,14 +4,14 @@ stages:
       dependsOn: Build
       environments:
         dev:
-          name: development
+          name: Development
           locations:
             euw: West Europe
           jobs:
             - template: deployment/deployment-env.yml
 
         prev:
-          name: preview
+          name: Preview
           dependsOn: dev
           locations:
             euw: West Europe
@@ -19,7 +19,7 @@ stages:
             - template: deployment/deployment-env.yml
 
         prod:
-          name: production
+          name: Production
           dependsOn: prev
           locations:
             euw: West Europe
