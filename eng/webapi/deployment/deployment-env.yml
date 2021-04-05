@@ -1,13 +1,13 @@
 jobs:
   - template: /eng/templates/deployment/webapp-deployment.yml
     parameters:
-      azureSubscriptionName: ${{ variables.azureSubscriptionName }}
-      azureProductName: ${{ variables.azureProductName }}
+      azureSubscriptionName: ${{ variables.AzureSubscriptionName }}
+      azureProductName: ${{ variables.AzureProductName }}
       environment:
-        key: ${{ variables.environment }}
-        name: ${{ variables.environmentName }}
+        key: ${{ variables.Environment }}
+        name: ${{ variables.EnvironmentName }}
       location:
-        key: ${{ variables.location }}
-        name: ${{ variables.locationName }}
+        key: ${{ variables.Location }}
+        name: ${{ variables.LocationName }}
       artifact:
         name: WebApi

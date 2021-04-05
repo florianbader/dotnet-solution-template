@@ -11,18 +11,21 @@ parameters:
         locations:
           euw: West Europe
         jobs: []
+        deploymentJobs: []
       prev:
         name: Preview
         dependsOn: dev
         locations:
           euw: West Europe
         jobs: []
+        deploymentJobs: []
       prod:
         name: Production
         dependsOn: prev
         locations:
           euw: West Europe
         jobs: []
+        deploymentJobs: []
 
 stages:
   - ${{ each env in parameters.environments }}:
@@ -34,9 +37,34 @@ stages:
             ${{ if eq(env.value.dependsOn, '') }}:
               dependsOn: ${{ parameters.dependsOn }}
             variables:
-              environment: ${{ env.key }}
-              environmentName: ${{ env.value.name }}
-              location: ${{ loc.key }}
-              locationName: ${{ loc.value }}
+              - name: Environment
+                value: ${{ env.key }}
+              - name: EnvironmentName
+                value: ${{ env.value.name }}
+              - name: Location
+                value: ${{ loc.key }}
+              - name: LocationName
+                value: ${{ loc.value }}
+              - name: ArtifactPath
+                value: ${{ coalesce(parameters.artifact.directory, format('{0}/build', variables['Pipeline.Workspace'])) }}/${{ coalesce(parameters.artifact.name, 'Artifact') }}
+              - template: /eng/templates/azure-variables.yml
             jobs:
-              - ${{ env.value.jobs }}
+              - ${{ each job in env.value.deploymentJobs }}:
+                  - deployment: ${{ job.key }}_${{ env.key }}_${{ loc.key }}
+                    displayName: ${{ job.displayName }} ${{ env.value.name }} ${{ parameters.location.name }}
+                    workspace:
+                      clean: all
+                    # use a different environment for resource triggers so we can have different approvals
+                    ${{ if eq(variables['Build.Reason'], 'ResourceTrigger') }}:
+                      environment: Deployment_PullRequest_${{ env.key }}_${{ loc.key }}
+                    ${{ if ne(variables['Build.Reason'], 'ResourceTrigger') }}:
+                      environment: Deployment_${{ env.key }}_${{ loc.key }}
+              - ${{ each job in env.value.jobs }}:
+                  - job: ${{ job.key }}_${{ env.key }}_${{ loc.key }}
+                    displayName: ${{ job.displayName }} ${{ env.value.name }} ${{ loc.value }}
+                    ${{ each pair in job }}:
+                      ${{ if ne(pair.key, 'dependsOn') }}:
+                        ${{ pair.key }}: ${{ pair.value }}
+                    dependsOn:
+                      - ${{ if job.dependsOn }}:
+                          - ${{ format('{0}_{1}_{2}', job.dependsOn, env.key, loc.key) }}
