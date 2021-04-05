@@ -48,8 +48,8 @@ stages:
               - template: /eng/templates/azure-variables.yml
             jobs:
               - ${{ each job in env.value.deploymentJobs }}:
-                  - deployment: ${{ job.job }}_${{ env.key }}_${{ loc.key }}
-                    displayName: ${{ job.job }} ${{ job.displayName }} ${{ env.value.name }} ${{ loc.value }}
+                  - deployment: ${{ job.deployment }}_${{ env.key }}_${{ loc.key }}
+                    displayName: ${{ job.displayName }} ${{ env.value.name }} ${{ loc.value }}
                     workspace:
                       clean: all
                     # use a different environment for resource triggers so we can have different approvals
@@ -57,6 +57,7 @@ stages:
                       environment: Deployment_PullRequest_${{ env.key }}_${{ loc.key }}
                     ${{ if ne(variables['Build.Reason'], 'ResourceTrigger') }}:
                       environment: Deployment_${{ env.key }}_${{ loc.key }}
+                    strategy: ${{ job.strategy }}
                     # ${{ each pair in job }}:
                     #   ${{ if and(ne(pair.key, 'workspace'), ne(pair.key, 'displayName'), ne(pair.key, 'environment')) }}:
                     #     ${{ pair.key }}: ${{ pair.value }}
