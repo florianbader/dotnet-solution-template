@@ -8,7 +8,7 @@ stages:
           locations:
             euw: West Europe
           jobs:
-            - template: ./deployment/deployment-env.yml
+            - template: /eng/webapi/deployment/deployment-env.yml
 
         prev:
           name: Preview
@@ -16,7 +16,7 @@ stages:
           locations:
             euw: West Europe
           jobs:
-            - template: ./deployment/deployment-env.yml
+            - template: /eng/webapi/deployment/deployment-env.yml
 
         prod:
           name: Production
@@ -24,4 +24,4 @@ stages:
           locations:
             euw: West Europe
           jobs:
-            - template: ./deployment/deployment-env.yml
+            - template: /eng/webapi/deployment/deployment-env.yml
