@@ -49,7 +49,7 @@ stages:
             jobs:
               - ${{ each job in env.value.deploymentJobs }}:
                   - deployment: ${{ job.job }}_${{ env.key }}_${{ loc.key }}
-                    displayName: ${{ job.displayName }} ${{ env.value.name }} ${{ loc.value }}
+                    displayName: ${{ job.job }} ${{ job.displayName }} ${{ env.value.name }} ${{ loc.value }}
                     workspace:
                       clean: all
                     # use a different environment for resource triggers so we can have different approvals
