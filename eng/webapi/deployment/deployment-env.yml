@@ -7,7 +7,7 @@ jobs:
         key: ${{ variables.Environment }}
         name: $(EnvironmentName)
       location:
-        key: ${{ loc.key }}
+        key: ${{ variables.Location }}
         name: $(LocationName)
       artifact:
         name: WebApi
