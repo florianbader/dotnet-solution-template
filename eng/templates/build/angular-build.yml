@@ -3,6 +3,10 @@ parameters:
     type: string
     default: ''
 
+  - name: internalFeed
+    type: string
+    default: ''
+
   - name: shouldTest
     type: boolean
     default: true
@@ -42,9 +46,9 @@ steps:
 
   - task: Npm@1
     displayName: Restore npm packages
-    # uncomment for internal feed
-    # feedsToUse: select
-    # vstsFeed: '<id>/<id>'
+    ${{ if ne(parameters.internalFeed, '') }}:
+      feedsToUse: select
+      vstsFeed: ${{ parameters.internalFeed }}
     inputs:
       command: custom
       customCommand: ci --cache .npm

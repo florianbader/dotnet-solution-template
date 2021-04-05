@@ -5,11 +5,16 @@ parameters:
   - name: environment
     type: string
 
+  - name: internalFeed
+    type: string
+    default: ''
+
 steps:
   - template: dotnet-build.yml
     parameters:
       buildProjects: src/Infrastructure/*.csproj
       testProjects: ''
+      internalFeed: ${{ parameters.internalFeed }}
 
   - task: Pulumi@1
     displayName: Preview infrastructure

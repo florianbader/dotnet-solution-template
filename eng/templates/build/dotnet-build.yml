@@ -7,6 +7,10 @@ parameters:
     type: string
     default: ''
 
+  - name: internalFeed
+    type: string
+    default: ''
+
   - name: shouldTest
     type: boolean
     default: true
@@ -82,9 +86,9 @@ steps:
     inputs:
       command: restore
       arguments: ${{ parameters.restoreAdditionalArguments }}
-      # uncomment for internal feed
-      # feedsToUse: select
-      # vstsFeed: '<id>/<id>'
+      ${{ if ne(parameters.internalFeed, '') }}:
+        feedsToUse: select
+        vstsFeed: ${{ parameters.internalFeed }}
       projects: |
         ${{ parameters.buildProjects }}
         ${{ parameters.testProjects }}
@@ -101,21 +105,21 @@ steps:
         ${{ parameters.publishProjects }}
 
   - ${{ if and(eq(parameters.shouldTest, true), ne(parameters.testProjects, '')) }}:
-      - task: DotNetCoreCLI@2
-        displayName: Run unit tests
-        inputs:
-          command: test
-          arguments: -c ${{ parameters.buildConfiguration }} --no-build --filter ${{ parameters.testsFilter }} /p:CollectCoverage /p:CoverletOutputFormat=cobertura /p:CoverletOutput=$(Agent.TempDirectory)/coverage /p:SkipAutoProps=true /p:ExcludeByAttribute="Obsolete%2cGeneratedCodeAttribute%2cCompilerGeneratedAttribute" ${{ parameters.testAdditionalArguments }}
-          testRunTitle: Unit Tests
-          publishTestResults: true
-          projects: |
-            ${{ parameters.testProjects }}
+    - task: DotNetCoreCLI@2
+      displayName: Run unit tests
+      inputs:
+        command: test
+        arguments: -c ${{ parameters.buildConfiguration }} --no-build --filter ${{ parameters.testsFilter }} /p:CollectCoverage /p:CoverletOutputFormat=cobertura /p:CoverletOutput=$(Agent.TempDirectory)/coverage /p:SkipAutoProps=true /p:ExcludeByAttribute="Obsolete%2cGeneratedCodeAttribute%2cCompilerGeneratedAttribute" ${{ parameters.testAdditionalArguments }}
+        testRunTitle: Unit Tests
+        publishTestResults: true
+        projects: |
+          ${{ parameters.testProjects }}
 
-  - ${{ if and(eq(parameters.shouldTest, true), eq(parameters.publishCodeCoverage, true), ne(parameters.testProjects, '')) }}:
+  - ${{ if and(eq(parameters.shouldTest, true), ne(parameters.testProjects, ''), eq(parameters.publishCodeCoverage, true)) }}:
     - script: dotnet tool restore
       displayName: Restore tools
 
-    - script: reportgenerator -reports:$(Agent.TempDirectory)/coverage/**/coverage.cobertura.xml -targetdir:$(Agent.TempDirectory)/coverageReport/ -reporttypes:"Cobertura;HtmlInline_AzurePipelines" -assemblyfilters:"${{ parameters.testCoverageAssemblyFilter }}" -classfilters:"${{ parameters.testCoverageClassFilter }}" -filefilters:"${{ parameters.testCoverageFileFilter }}"
+    - script: dotnet reportgenerator -reports:$(Agent.TempDirectory)/coverage/**/coverage.cobertura.xml -targetdir:$(Agent.TempDirectory)/coverageReport/ -reporttypes:"Cobertura;HtmlInline_AzurePipelines" -assemblyfilters:"${{ parameters.testCoverageAssemblyFilter }}" -classfilters:"${{ parameters.testCoverageClassFilter }}" -filefilters:"${{ parameters.testCoverageFileFilter }}"
       displayName: Create code coverage report
 
     - task: PublishCodeCoverageResults@1
