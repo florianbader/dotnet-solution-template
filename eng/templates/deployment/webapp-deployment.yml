@@ -30,10 +30,10 @@ jobs:
       - task: ArchiveFiles@2
         displayName: Archive web app
         inputs:
-          rootFolderOrFile: ${{ parameters.artifact.Directory }}/${{ parameters.artifact.name }}
+          rootFolderOrFile: ${{ parameters.artifact.directory }}/${{ parameters.artifact.name }}
           includeRootFolder: false
           archiveType: zip
-          archiveFile: ${{ parameters.artifact.Directory }}/${{ parameters.artifact.name }}.zip
+          archiveFile: ${{ parameters.artifact.directory }}/${{ parameters.artifact.name }}.zip
           replaceExistingArchive: true
 
       - task: AzureWebApp@1
@@ -43,6 +43,6 @@ jobs:
           appType: webApp
           appName: ${{ parameters.azureProductName }}-${{ parameters.environment.key }}-${{ parameters.location.key }}-app
           resourceGroupName: ${{ parameters.azureProductName }}-${{ parameters.environment.key }}-${{ parameters.location.key }}-rg
-          package: ${{ parameters.artifact.Directory }}/${{ parameters.artifact.name }}.zip
+          package: ${{ parameters.artifact.directory }}/${{ parameters.artifact.name }}.zip
           deploymentMethod: zipDeploy
           deployToSlotOrASE: false

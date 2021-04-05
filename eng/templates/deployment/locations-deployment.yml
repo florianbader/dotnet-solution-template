@@ -40,8 +40,8 @@ stages:
               locationName: ${{ loc.value }}
             jobs:
               - ${{ each job in parameters.jobs }}:
-                  - deployment: Deployment_${{ env.key }}_${{ loc.key }}
-                    displayName: Deployment ${{ env.value.name }} ${{ loc.value }}
+                  - deployment: ${{ job.key }}
+                    displayName: ${{ job.displayName }}
                     workspace:
                       clean: all
                     # use a different environment for resource triggers so we can have different approvals

@@ -8,6 +8,9 @@ stages:
     # always build for master except if it is a resource trigger (e.g. already build with the build pipeline)
     condition: or(eq(variables['Build.SourceBranch'], 'refs/heads/master'), ne(variables['Build.Reason'], 'ResourceTrigger'))
     jobs:
-      - template: build/build-webapi.yml
+      - job: Test
+        steps:
+          - script: echo 'hello'
+      # - template: build/build-webapi.yml
 
-      - template: build/build-website.yml
+      # - template: build/build-website.yml
