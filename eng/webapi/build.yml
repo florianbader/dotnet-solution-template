@@ -10,7 +10,7 @@ stages:
     jobs:
       - job: Test
         steps:
-          - script: echo 'hello'
+          - script: printenv
       # - template: build/build-webapi.yml
 
       # - template: build/build-website.yml
