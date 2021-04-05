@@ -9,7 +9,7 @@ jobs:
     workspace:
       clean: all
     steps:
-      - template: ../../templates/build/angular-build.yml
+      - template: /eng/templates/build/angular-build.yml
         parameters:
           buildProject: src/Website/
           publishArtifactName: Website

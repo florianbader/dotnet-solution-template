@@ -9,7 +9,7 @@ schedules:
 jobs:
   - job: WebApi
     steps:
-      - template: ../templates/dotnet-build.yml
+      - template: /eng/templates/dotnet-build.yml
         parameters:
           buildProjects: src/Solution.sln
           testProjects: '' # remove this if you also want to run your tests in the nightly

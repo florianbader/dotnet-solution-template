@@ -1,5 +1,5 @@
 jobs:
-  - template: ../../templates/deployment/webapp-deployment.yml
+  - template: /eng/templates/deployment/webapp-deployment.yml
     parameters:
       azureSubscriptionName: ${{ variables.azureSubscriptionName }}
       azureProductName: ${{ variables.azureProductName }}

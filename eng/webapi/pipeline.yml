@@ -8,11 +8,11 @@ trigger:
       - src/*
 
 variables:
-  - template: ../templates/version.yml
+  - template: /eng/templates/version.yml
     parameters:
       major: 1
       minor: 0
-  - template: ../templates/azure-variables.yml
+  - template: /eng/templates/azure-variables.yml
 
 resources:
   pipelines:

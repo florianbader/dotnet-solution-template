@@ -23,18 +23,6 @@ parameters:
     type: boolean
     default: true
 
-  - name: testCoverageAssemblyFilter
-    type: string
-    default:
-
-  - name: testCoverageFileFilter
-    type: string
-    default:
-
-  - name: testCoverageClassFilter
-    type: string
-    default:
-
   - name: publishArtifactName
     type: string
     default: Artifact
@@ -71,7 +59,7 @@ steps:
       - script: dotnet tool restore
         displayName: Restore tools
 
-      - script: reportgenerator -reports:$(Agent.TempDirectory)/coverage/**/coverage.cobertura.xml -targetdir:$(Agent.TempDirectory)/coverageReport/ -reporttypes:"Cobertura;HtmlInline_AzurePipelines" -assemblyfilters:"${{ parameters.testCoverageAssemblyFilter }}" -classfilters:"${{ parameters.testCoverageClassFilter }}" -filefilters:"${{ parameters.testCoverageFileFilter }}"
+      - script: dotnet reportgenerator -reports:$(Agent.TempDirectory)/coverage/**/coverage.cobertura.xml -targetdir:$(Agent.TempDirectory)/coverageReport/ -reporttypes:"Cobertura;HtmlInline_AzurePipelines"
         displayName: Create code coverage report
 
       - task: PublishCodeCoverageResults@1
@@ -84,12 +72,12 @@ steps:
         env:
           disable.coverage.autogenerate: true
 
-  - ${{ if ne(parameters.shouldLint, true) }}:
+  - ${{ if eq(parameters.shouldLint, true) }}:
       - script: npm run lint
         displayName: Run linting
         workingDirectory: ${{ parameters.buildProject }}
 
-  - ${{ if ne(parameters.shouldPublish, true) }}:
+  - ${{ if eq(parameters.shouldPublish, true) }}:
       - script: npm run publish
         displayName: Publish app
         workingDirectory: ${{ parameters.buildProject }}

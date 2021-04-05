@@ -28,6 +28,8 @@ jobs:
     displayName: Deployment Web App ${{ parameters.environment.name }} ${{ parameters.location.name }}
     workspace:
       clean: all
+    variables:
+      ArtifactPath: ${{ coalesce(parameters.artifact.directory, format('{0}/build', variables['Pipeline.Workspace'])) }}/${{ coalesce(parameters.artifact.name, 'Artifact') }}
     # use a different environment for resource triggers so we can have different approvals
     ${{ if eq(variables['Build.Reason'], 'ResourceTrigger') }}:
       environment: Deployment_PullRequest_${{ parameters.environment.key }}_${{ parameters.location.key }}
@@ -40,10 +42,10 @@ jobs:
             - task: ArchiveFiles@2
               displayName: Archive web app
               inputs:
-                rootFolderOrFile: ${{ parameters.artifact.directory }}/${{ parameters.artifact.name }}
+                rootFolderOrFile: ${{ variables.ArtifactPath }}
                 includeRootFolder: false
                 archiveType: zip
-                archiveFile: ${{ parameters.artifact.directory }}/${{ parameters.artifact.name }}.zip
+                archiveFile: ${{ variables.ArtifactPath }}.zip
                 replaceExistingArchive: true
 
             - task: AzureWebApp@1
@@ -53,6 +55,6 @@ jobs:
                 appType: webApp
                 appName: ${{ parameters.azureProductName }}-${{ parameters.environment.key }}-${{ parameters.location.key }}-app
                 resourceGroupName: ${{ parameters.azureProductName }}-${{ parameters.environment.key }}-${{ parameters.location.key }}-rg
-                package: ${{ parameters.artifact.directory }}/${{ parameters.artifact.name }}.zip
+                package: ${{ variables.ArtifactPath }}.zip
                 deploymentMethod: zipDeploy
                 deployToSlotOrASE: false
