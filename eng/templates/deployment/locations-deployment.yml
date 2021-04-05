@@ -39,4 +39,4 @@ stages:
               location: ${{ loc.key }}
               locationName: ${{ loc.value }}
             jobs:
-              - ${{ parameter.jobs }}
+              - ${{ parameters.jobs }}
