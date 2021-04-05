@@ -30,9 +30,9 @@ jobs:
       clean: all
     # use a different environment for resource triggers so we can have different approvals
     ${{ if eq(variables['Build.Reason'], 'ResourceTrigger') }}:
-      environment: Deployment_PullRequest_${{ env.key }}_${{ loc.key }}
+      environment: Deployment_PullRequest_${{ parameters.environment.key }}_${{ parameters.location.key }}
     ${{ if ne(variables['Build.Reason'], 'ResourceTrigger') }}:
-      environment: Deployment_${{ env.key }}_${{ loc.key }}
+      environment: Deployment_${{ parameters.environment.key }}_${{ parameters.location.key }}
     variables:
       ArtifactPath: ${{ coalesce(parameters.artifact.directory, format('{0}/build', variables['Pipeline.Workspace'])) }}/${{ coalesce(parameters.artifact.name, 'Artifact') }}
     strategy:
