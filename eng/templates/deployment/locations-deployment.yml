@@ -44,7 +44,7 @@ stages:
                 value: ${{ loc.value }}
               - template: /eng/templates/azure-variables.yml
             jobs:
-              - ${{ env.jobs }}
+              - ${{ env.value.jobs }}
 
                 # - deployment: ${{ job.deployment }}_${{ env.key }}_${{ loc.key }}
                 #   displayName: ${{ job.displayName }} ${{ env.value.name }} ${{ loc.value }}
