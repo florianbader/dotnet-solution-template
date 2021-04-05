@@ -4,10 +4,10 @@ jobs:
       azureSubscriptionName: $(AzureSubscriptionName)
       azureProductName: $(AzureProductName)
       environment:
-        key: $(Environment)
+        key: ${{ variables.Environment }}
         name: $(EnvironmentName)
       location:
-        key: $(Location)
+        key: ${{ loc.key }}
         name: $(LocationName)
       artifact:
         name: WebApi
