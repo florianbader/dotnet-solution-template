@@ -1,0 +1,7 @@
+[ReportGenerator]
+    # assemblyfilter = +Test
+    # assemblyfilter = -Test
+    # classfilter = +Test2
+    # classfilter = -Test2
+    # filefilter = +cs
+    # filefilter = -vb

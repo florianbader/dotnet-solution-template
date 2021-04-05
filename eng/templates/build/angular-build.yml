@@ -19,7 +19,7 @@ parameters:
     type: boolean
     default: true
 
-  - name: publishCodeCoverage
+  - name: shouldPublishCodeCoverage
     type: boolean
     default: true
 
@@ -67,7 +67,7 @@ steps:
           testRunTitle: Unit Tests
           searchFolder: ${{ parameters.buildProject }}
 
-  - ${{ if eq(parameters.publishCodeCoverage, true) }}:
+  - ${{ if and(eq(parameters.shouldTest, true), eq(parameters.shouldPublishCodeCoverage, true)) }}:
       - script: dotnet tool restore
         displayName: Restore tools
 

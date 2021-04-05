@@ -14,3 +14,4 @@ jobs:
           buildProject: src/Website/
           publishArtifactName: Website
           shouldTest: ${{ parameters.shouldTest }}
+          shouldPublishCodeCoverage: false
