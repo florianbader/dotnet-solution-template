@@ -1,27 +1,27 @@
 stages:
-  - template: /eng/templates/deployment/locations-deployment.yml
-    parameters:
-      dependsOn: Build
-      environments:
-        dev:
-          name: Development
-          locations:
-            euw: West Europe
-          jobs:
-            - template: /eng/webapi/deployment/deployment-env.yml
+  - stage: Dev
+    displayName: Development
+    jobs:
+      - template: /eng/webapi/deployment/deployment-env.yml
+        parameters:
+          environment:
+            key: dev
+            name: Development
 
-        prev:
-          name: Preview
-          dependsOn: dev
-          locations:
-            euw: West Europe
-          jobs:
-            - template: /eng/webapi/deployment/deployment-env.yml
+  - stage: Prev
+    displayName: Preview
+    jobs:
+      - template: /eng/webapi/deployment/deployment-env.yml
+        parameters:
+          environment:
+            key: prev
+            name: Preview
 
-        prod:
-          name: Production
-          dependsOn: prev
-          locations:
-            euw: West Europe
-          jobs:
-            - template: /eng/webapi/deployment/deployment-env.yml
+  - stage: Prod
+    displayName: Production
+    jobs:
+      - template: /eng/webapi/deployment/deployment-env.yml
+        parameters:
+          environment:
+            key: prod
+            name: Production
