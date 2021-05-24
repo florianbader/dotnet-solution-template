@@ -37,7 +37,7 @@ jobs:
       ${{ if eq(variables['Build.Reason'], 'ResourceTrigger') }}:
         artifactName: ${{ format('build/{0}', coalesce(parameters.artifact.name, 'Artifact')) }}
       ${{ if ne(variables['Build.Reason'], 'ResourceTrigger') }}:
-        artifactName: ${{ format('{0}', coalesce(parameters.artifact.name, 'Artifact')) }}
+        artifactName: ${{ coalesce(parameters.artifact.name, 'Artifact') }}
     strategy:
       runOnce:
         deploy:
@@ -51,6 +51,8 @@ jobs:
                 archiveFile: $(Pipeline.Workspace)/$(artifactName).zip
                 replaceExistingArchive: true
 
+            - script: echo '${{ parameters.azureProductName }};${{ parameters.azureSubscriptionName }};$(azureProductName);$(azureSubscriptionName)'
+
             - task: AzureWebApp@1
               displayName: Deploy web app
               inputs:
@@ -58,6 +60,6 @@ jobs:
                 appType: webApp
                 appName: ${{ parameters.azureProductName }}-${{ parameters.environment.key }}-${{ parameters.location.key }}-app
                 resourceGroupName: ${{ parameters.azureProductName }}-${{ parameters.environment.key }}-${{ parameters.location.key }}-rg
-                package: ${{ variables.artifactName }}.zip
+                package: $(Pipeline.Workspace)/${{ variables.artifactName }}.zip
                 deploymentMethod: zipDeploy
                 deployToSlotOrASE: false
