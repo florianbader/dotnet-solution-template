@@ -12,6 +12,6 @@ stages:
         parameters:
           shouldTest: ${{ parameters.shouldTest }}
 
-      - template: build/build-website.yml
-        parameters:
-          shouldTest: ${{ parameters.shouldTest }}
+      # - template: build/build-website.yml
+      #   parameters:
+      #     shouldTest: ${{ parameters.shouldTest }}
