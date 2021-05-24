@@ -18,7 +18,6 @@ jobs:
         name: Website
       preDeployment:
         - template: /eng/templates/tokenizer.yml
-          displayName: Tokenize environment file
           parameters:
             filePath: $(artifactName)/main*
             tokens:
