@@ -20,6 +20,8 @@ jobs:
     workspace:
       clean: all
     environment: Deployment_${{ parameters.environment.key }}_${{ parameters.location.key }}
+    variables:
+      - group: Pulumi.${{ parameters.environment.key }}
     strategy:
       runOnce:
         deploy:
