@@ -8,8 +8,8 @@ parameters:
 jobs:
   - template: /eng/templates/deployment/webapp-deployment.yml
     parameters:
-      azureSubscriptionName: ${{ variables.AzureSubscriptionName }}
-      azureProductName: ${{ variables.AzureProductName }}
+      azureSubscriptionName: ${{ variables.azureSubscriptionName }}
+      azureProductName: ${{ variables.azureProductName }}
       environment: ${{ parameters.environment }}
       location:
         key: euw
