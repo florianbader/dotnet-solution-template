@@ -36,7 +36,7 @@ jobs:
                 command: up
                 loginArgs: azblob://state
                 cwd: src/Infrastructure
-                stack: ${{ parameters.environment }}
+                stack: ${{ parameters.environment.key }}
                 args: --diff --show-replacement-steps
 
             - task: AzureCLI@2
@@ -46,4 +46,4 @@ jobs:
                 scriptType: pscore
                 scriptLocation: scriptPath
                 scriptPath: src/Infrastructure/Scripts/post-deployment.preview.ps1
-                arguments: -env ${{ parameters.environment }}
+                arguments: -env ${{ parameters.environment.key }}
