@@ -12,7 +12,7 @@ steps:
           read -a token <<< "$line"
           key=$(echo ${token[0]} | sed -e "s|/|\\\/|g")
           value=$(echo ${token[1]} | sed -e "s|/|\\\/|g")
-          sed -i "s/__$key__/$value/g" ${{ parameters.filePath }}
+          sed -i "s/\_\_$key\_\_/$value/g" ${{ parameters.filePath }}
       done
     displayName: Tokenize file
     env:
