@@ -42,7 +42,7 @@ The current state of the environment (stack) is saved to a state file. This stat
 ### Setup Azure Blob Storage
 
 ```powershell
-$env:AZURE_STORAGE_ACCOUNT = '<storageAccountName>'
+$env:AZURE_STORAGE_ACCOUNT = 'webapiinfrastructurestg'
 $env:AZURE_STORAGE_KEY = (az storage account keys list -n $env:AZURE_STORAGE_ACCOUNT --query "[0].value" -o tsv)
 pulumi login azblob://state
 ```
@@ -50,6 +50,13 @@ pulumi login azblob://state
 The configuration and state is now saved to the Azure Blob Storage container.
 
 ## Deploy
+
+Set the keephrase for the environment:
+
+```powershell
+$environment = 'dev' # dev, prev, prod
+$env:PULUMI_CONFIG_PASSPHRASE = (az keyvault secret show -n PulumiPassphrase --vault-name webapi-$environment-euw-kv --query value -o tsv)
+```
 
 The given environment can be deployed as follow:
 
