@@ -94,14 +94,14 @@ steps:
 
   - ${{ if and(eq(parameters.shouldTest, true), ne(parameters.testProjects, '')) }}:
     - task: DotNetCoreCLI@2
-        displayName: Run unit tests
-        inputs:
-          command: test
-          arguments: -c ${{ parameters.buildConfiguration }} --no-build --filter ${{ parameters.testsFilter }} /p:CollectCoverage /p:CoverletOutputFormat=cobertura /p:CoverletOutput=$(Agent.TempDirectory)/coverage /p:SkipAutoProps=true /p:ExcludeByAttribute="Obsolete%2cGeneratedCodeAttribute%2cCompilerGeneratedAttribute" ${{ parameters.testAdditionalArguments }}
-          testRunTitle: Unit Tests
-          publishTestResults: true
-          projects: |
-            ${{ parameters.testProjects }}
+      displayName: Run unit tests
+      inputs:
+        command: test
+        arguments: -c ${{ parameters.buildConfiguration }} --no-build --filter ${{ parameters.testsFilter }} /p:CollectCoverage /p:CoverletOutputFormat=cobertura /p:CoverletOutput=$(Agent.TempDirectory)/coverage /p:SkipAutoProps=true /p:ExcludeByAttribute="Obsolete%2cGeneratedCodeAttribute%2cCompilerGeneratedAttribute" ${{ parameters.testAdditionalArguments }}
+        testRunTitle: Unit Tests
+        publishTestResults: true
+        projects: |
+          ${{ parameters.testProjects }}
 
   - ${{ if and(eq(parameters.shouldTest, true), ne(parameters.testProjects, ''), eq(parameters.shouldPublishCodeCoverage, true)) }}:
     - script: dotnet tool restore
