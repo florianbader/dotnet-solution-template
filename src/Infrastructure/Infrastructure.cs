@@ -17,6 +17,10 @@ namespace Infrastructure
             var keyVault = new KeyVaultResource(resourceGroup);
             keyVault.Build();
 
+            var staticWebsite = new StorageAccountResource(resourceGroup, "sw");
+            staticWebsite.AddStaticWebsites();
+            staticWebsite.Build();
+
             var storageAccount = new StorageAccountResource(resourceGroup);
             storageAccount.Build();
             keyVault.AddSecrets(storageAccount);

@@ -11,8 +11,8 @@ namespace Infrastructure
     {
         private StorageAccount _storageAccount = null!;
 
-        public StorageAccountResource(ResourceGroupResource resourceGroup)
-            : base(resourceGroup, "stg", nameHasHyphens: false)
+        public StorageAccountResource(ResourceGroupResource resourceGroup, string? name = null)
+            : base(resourceGroup, name is not null ? $"{name}stg" : "stg", nameHasHyphens: false)
         {
         }
 
@@ -24,16 +24,30 @@ namespace Infrastructure
         public IEnumerable<(string Key, Output<string>? Value)> Secrets
             => new (string Key, Output<string>? Value)[] { (Key: "StorageConnectionString", Value: ConnectionString) };
 
-        public void Build() => _storageAccount = new StorageAccount(Name, new StorageAccountArgs
+        public void AddStaticWebsites()
         {
-            AccountName = Name,
-            ResourceGroupName = ResourceGroupName,
-            Kind = Kind.StorageV2,
-            AccessTier = AccessTier.Hot,
-            Sku = new SkuArgs
+            _ = new StorageAccountStaticWebsite($"{Name}-staticwebsite", new StorageAccountStaticWebsiteArgs
             {
-                Name = "Standard_LRS",
-            },
-        });
+                ResourceGroupName = ResourceGroupName,
+                AccountName = Name,
+                IndexDocument = "index.html",
+                Error404Document = "index.html",
+            });
+        }
+
+        public void Build()
+        {
+            _storageAccount = new StorageAccount(Name, new StorageAccountArgs
+            {
+                AccountName = Name,
+                ResourceGroupName = ResourceGroupName,
+                Kind = Kind.StorageV2,
+                AccessTier = AccessTier.Hot,
+                Sku = new SkuArgs
+                {
+                    Name = "Standard_LRS",
+                },
+            });
+        }
     }
 }

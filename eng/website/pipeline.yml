@@ -5,7 +5,7 @@ trigger:
       - master
   paths:
     include:
-      - src/WebApi/*
+      - src/Website/*
 
 variables:
   - template: /eng/templates/version.yml
@@ -17,7 +17,7 @@ variables:
 resources:
   pipelines:
     - pipeline: build
-      source: WebApi.PR
+      source: Website.PR
       trigger:
         stages:
           - Build
