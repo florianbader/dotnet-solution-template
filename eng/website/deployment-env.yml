@@ -19,6 +19,6 @@ jobs:
       preDeployment:
         - template: /eng/templates/tokenizer.yml
           parameters:
-            filePath:
+            filePath: $(artifactName)/main*
             tokens:
               ApplicationUrl: https://webapi-${{ parameters.environment.key }}-euw-app.azurewebsites.net/
