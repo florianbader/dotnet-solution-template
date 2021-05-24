@@ -10,7 +10,9 @@ steps:
       printenv | grep TOKENS_ | sed 's/TOKENS_//g' | while read -r line ; do
           IFS='='
           read -a token <<< "$line"
-          sed -i "s/__${token[0]}__/${token[1]}/g" ${{ parameters.filePath }}
+          key=$(token[0] | sed -e "s/\//\\\//g")
+          value=$(token[1] | sed -e "s/\//\\\//g")
+          sed -i "s/__$key__/$value/g" ${{ parameters.filePath }}
       done
     displayName: Tokenize file
     env:
