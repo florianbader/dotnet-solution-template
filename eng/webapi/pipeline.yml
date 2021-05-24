@@ -17,7 +17,7 @@ variables:
 resources:
   pipelines:
     - pipeline: build
-      source: WebApi.Build
+      source: WebApi.PR
       trigger:
         stages:
           - Build
