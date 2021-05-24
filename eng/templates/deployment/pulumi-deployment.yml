@@ -40,7 +40,7 @@ jobs:
                   AZURE_STORAGE_ACCOUNT="webapiinfrastructurestg"
                   echo "##vso[task.setvariable variable=AZURE_STORAGE_ACCOUNT;isOutput=false]$AZURE_STORAGE_ACCOUNT"
 
-                  AZURE_STORAGE_KEY=(az storage account keys list -n "$AZURE_STORAGE_ACCOUNT" --query "[0].value" -o tsv)
+                  AZURE_STORAGE_KEY=$(az storage account keys list -n "$AZURE_STORAGE_ACCOUNT" --query "[0].value" -o tsv)
                   echo "##vso[task.setvariable variable=AZURE_STORAGE_KEY;isOutput=false]$AZURE_STORAGE_KEY"
 
             - task: Pulumi@1
