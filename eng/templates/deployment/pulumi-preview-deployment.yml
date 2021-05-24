@@ -3,7 +3,16 @@ parameters:
     type: string
 
   - name: environment
-    type: string
+    type: object
+    default:
+      key: dev
+      name: Development
+
+  - name: location
+    type: object
+    default:
+      key: euw
+      name: West Europe
 
 jobs:
   - deployment: Preview_Infrastructure_${{ parameters.environment.key }}_${{ parameters.location.key }}

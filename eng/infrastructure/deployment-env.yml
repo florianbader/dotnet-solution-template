@@ -10,8 +10,14 @@ jobs:
     parameters:
       azureSubscriptionName: $(azureSubscriptionName)
       environment: ${{ parameters.environment }}
+      location:
+        key: euw
+        name: West Europe
 
   - template: /eng/templates/deployment/pulumi-deployment.yml
     parameters:
       azureSubscriptionName: $(azureSubscriptionName)
       environment: ${{ parameters.environment }}
+      location:
+        key: euw
+        name: West Europe
