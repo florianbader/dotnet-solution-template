@@ -42,7 +42,10 @@ jobs:
       runOnce:
         deploy:
           steps:
-            - script: echo '${{ parameters.artifact.directory }};$(artifactPath);$(Pipeline.Workspace)'
+            - script: |
+                echo '${{ parameters.artifact.directory }};$(artifactPath);${{ variables['Pipeline.Workspace'] }}'
+                echo '${{ format('{0}/{1}', coalesce(parameters.artifact.directory, variables['Pipeline.Workspace']), coalesce(parameters.artifact.name, 'Artifact')) }}'
+
             - task: ArchiveFiles@2
               displayName: Archive web app
               inputs:
