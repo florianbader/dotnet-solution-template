@@ -16,7 +16,7 @@ jobs:
       #     publishArtifactName: WebApi
       #     shouldTest: ${{ parameters.shouldTest }}
       #     shouldPublishCodeCoverage: false
-      - script: touch $(Build.ArtifactStagingDirectory)/test
+      - script: mkdir $(Build.ArtifactStagingDirectory)/WebApi && touch $(Build.ArtifactStagingDirectory)/WebApi/test
 
       - upload: $(Build.ArtifactStagingDirectory)/WebApi
         artifact: WebApi
