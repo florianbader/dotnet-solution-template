@@ -2,7 +2,7 @@ stages:
   - stage: Dev
     displayName: Development
     jobs:
-      - template: /eng/website/deployment-env.yml
+      - template: /eng/infrastructure/deployment-env.yml
         parameters:
           environment:
             key: dev
@@ -11,7 +11,7 @@ stages:
   - stage: Prev
     displayName: Preview
     jobs:
-      - template: /eng/website/deployment-env.yml
+      - template: /eng/infrastructure/deployment-env.yml
         parameters:
           environment:
             key: prev
@@ -20,7 +20,7 @@ stages:
   - stage: Prod
     displayName: Production
     jobs:
-      - template: /eng/website/deployment-env.yml
+      - template: /eng/infrastructure/deployment-env.yml
         parameters:
           environment:
             key: prod
