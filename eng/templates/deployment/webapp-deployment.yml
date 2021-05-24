@@ -21,7 +21,7 @@ parameters:
     type: object
     default:
       name: Artifact
-      directory: $(Pipeline.Workspace)/build
+      directory: $(Pipeline.Workspace)
 
 jobs:
   - deployment: Deployment_WebApp_${{ parameters.environment.key }}_${{ parameters.location.key }}
@@ -42,6 +42,7 @@ jobs:
       runOnce:
         deploy:
           steps:
+            - script: echo '${{ parameters.artifact.directory }};$(artifactPath);$(Pipeline.Workspace)'
             - task: ArchiveFiles@2
               displayName: Archive web app
               inputs:

@@ -9,10 +9,15 @@ jobs:
     workspace:
       clean: all
     steps:
-      - template: /eng/templates/build/dotnet-build.yml
-        parameters:
-          buildProjects: 'src/WebApi/*.csproj'
-          publishProjects: 'src/WebApi/*.csproj'
-          publishArtifactName: WebApi
-          shouldTest: ${{ parameters.shouldTest }}
-          shouldPublishCodeCoverage: false
+      # - template: /eng/templates/build/dotnet-build.yml
+      #   parameters:
+      #     buildProjects: 'src/WebApi/*.csproj'
+      #     publishProjects: 'src/WebApi/*.csproj'
+      #     publishArtifactName: WebApi
+      #     shouldTest: ${{ parameters.shouldTest }}
+      #     shouldPublishCodeCoverage: false
+      - script: touch $(Build.ArtifactStagingDirectory)/test
+
+      - upload: $(Build.ArtifactStagingDirectory)/WebApi
+        artifact: WebApi
+        displayName: Publish artifact

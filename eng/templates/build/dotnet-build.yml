@@ -92,8 +92,8 @@ steps:
         ${{ parameters.testProjects }}
         ${{ parameters.publishProjects }}
 
-  - ? ${{ if and(eq(parameters.shouldTest, true), ne(parameters.testProjects, '')) }}
-    : - task: DotNetCoreCLI@2
+  - ${{ if and(eq(parameters.shouldTest, true), ne(parameters.testProjects, '')) }}:
+    - task: DotNetCoreCLI@2
         displayName: Run unit tests
         inputs:
           command: test
@@ -103,22 +103,22 @@ steps:
           projects: |
             ${{ parameters.testProjects }}
 
-  - ? ${{ if and(eq(parameters.shouldTest, true), ne(parameters.testProjects, ''), eq(parameters.shouldPublishCodeCoverage, true)) }}
-    : - script: dotnet tool restore
-        displayName: Restore tools
+  - ${{ if and(eq(parameters.shouldTest, true), ne(parameters.testProjects, ''), eq(parameters.shouldPublishCodeCoverage, true)) }}:
+    - script: dotnet tool restore
+      displayName: Restore tools
 
-      - script: dotnet reportgenerator -reports:$(Agent.TempDirectory)/coverage/**/coverage.cobertura.xml -targetdir:$(Agent.TempDirectory)/coverageReport/ -reporttypes:"Cobertura;HtmlInline_AzurePipelines"
-        displayName: Create code coverage report
+    - script: dotnet reportgenerator -reports:$(Agent.TempDirectory)/coverage/**/coverage.cobertura.xml -targetdir:$(Agent.TempDirectory)/coverageReport/ -reporttypes:"Cobertura;HtmlInline_AzurePipelines"
+      displayName: Create code coverage report
 
-      - task: PublishCodeCoverageResults@1
-        displayName: Publish code coverage report
-        inputs:
-          codeCoverageTool: Cobertura
-          summaryFileLocation: $(Agent.TempDirectory)/coverageReport/Cobertura.xml
-          reportDirectory: $(Agent.TempDirectory)/coverageReport
-          failIfCoverageEmpty: false
-        env:
-          disable.coverage.autogenerate: true
+    - task: PublishCodeCoverageResults@1
+      displayName: Publish code coverage report
+      inputs:
+        codeCoverageTool: Cobertura
+        summaryFileLocation: $(Agent.TempDirectory)/coverageReport/Cobertura.xml
+        reportDirectory: $(Agent.TempDirectory)/coverageReport
+        failIfCoverageEmpty: false
+      env:
+        disable.coverage.autogenerate: true
 
   - ${{ if ne(parameters.publishProjects, '') }}:
       - task: DotNetCoreCLI@2
