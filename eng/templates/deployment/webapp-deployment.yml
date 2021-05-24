@@ -51,8 +51,6 @@ jobs:
                 archiveFile: $(Pipeline.Workspace)/$(artifactName).zip
                 replaceExistingArchive: true
 
-            - script: echo '${{ parameters.azureProductName }};${{ parameters.azureSubscriptionName }};$(azureProductName);$(azureSubscriptionName)'
-
             - task: AzureWebApp@1
               displayName: Deploy web app
               inputs:
