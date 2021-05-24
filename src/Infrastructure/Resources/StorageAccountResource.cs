@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Infrastructure.Resources;
@@ -24,12 +25,14 @@ namespace Infrastructure
         public IEnumerable<(string Key, Output<string>? Value)> Secrets
             => new (string Key, Output<string>? Value)[] { (Key: "StorageConnectionString", Value: ConnectionString) };
 
-        public void AddStaticWebsites()
+        public void BuildStaticWebsite()
         {
+            _ = _storageAccount ?? throw new InvalidOperationException("Storage account must be build before building static website");
+
             _ = new StorageAccountStaticWebsite($"{Name}-staticwebsite", new StorageAccountStaticWebsiteArgs
             {
                 ResourceGroupName = ResourceGroupName,
-                AccountName = Name,
+                AccountName = _storageAccount.Name,
                 IndexDocument = "index.html",
                 Error404Document = "index.html",
             });

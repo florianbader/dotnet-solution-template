@@ -48,4 +48,9 @@ jobs:
                 azureSubscription: ${{ parameters.azureSubscriptionName }}
                 scriptType: bash
                 scriptLocation: inlineScript
-                inlineScript: az storage blob upload-batch --account-name ${{ parameters.azureProductName }}${{ parameters.environment.key }}${{ parameters.location.key }}swstg -d '$web' -s $(artifactName) --auth-mode login
+                inlineScript: |
+                  resourceGroupName="${{ parameters.azureProductName }}-${{ parameters.environment.key }}-${{ parameters.location.key }}-rg"
+                  storageName="${{ parameters.azureProductName }}${{ parameters.environment.key }}${{ parameters.location.key }}swstg"
+                  connectionString=(az storage account show-connection-string -n $storageName -g $resourceGroupName --query "connectionString" -o tsv)
+
+                  az storage blob upload-batch -d \$web -s $(artifactName) --connection-string $connectionString
