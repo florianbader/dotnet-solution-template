@@ -16,3 +16,9 @@ jobs:
         name: West Europe
       artifact:
         name: Website
+      preDeployment:
+        - template: /eng/templates/tokenizer.yml
+          parameters:
+            filePath:
+            tokens:
+              ApplicationUrl: https://webapi-${{ parameters.environment.key }}-euw-app.azurewebsites.net/

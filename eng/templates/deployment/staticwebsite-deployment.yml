@@ -23,6 +23,10 @@ parameters:
       name: Artifact
       directory: $(Pipeline.Workspace)
 
+  - name: preDeployment
+    type: stepList
+    default: []
+
 jobs:
   - deployment: Deployment_Website_${{ parameters.environment.key }}_${{ parameters.location.key }}
     displayName: Deployment Website
@@ -42,6 +46,8 @@ jobs:
       runOnce:
         deploy:
           steps:
+            - ${{ parameters.preDeployment }}
+
             - task: AzureCLI@2
               displayName: Deploy website
               inputs:

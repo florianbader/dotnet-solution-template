@@ -48,7 +48,7 @@ jobs:
               displayName: Preview infrastructure
               inputs:
                 azureSubscription: ${{ parameters.azureSubscriptionName }}
-                command: up
+                command: preview
                 loginArgs: azblob://state
                 cwd: src/Infrastructure
                 stack: ${{ parameters.environment.key }}
