@@ -20,6 +20,7 @@ jobs:
     workspace:
       clean: all
     environment: Deployment_${{ parameters.environment.key }}_${{ parameters.location.key }}
+    dependsOn: Preview_Infrastructure_${{ parameters.environment.key }}_${{ parameters.location.key }}
     strategy:
       runOnce:
         deploy:
