@@ -53,4 +53,4 @@ jobs:
                   storageName="${{ parameters.azureProductName }}${{ parameters.environment.key }}${{ parameters.location.key }}swstg"
                   connectionString=(az storage account show-connection-string -n $storageName -g $resourceGroupName --query "connectionString" -o tsv)
 
-                  az storage blob upload-batch -d \$web -s $(artifactName) --connection-string $connectionString
+                  az storage blob upload-batch -d "\$web" -s $(artifactName) --connection-string "$connectionString"

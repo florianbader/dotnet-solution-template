@@ -18,6 +18,8 @@ az devops configure --defaults organization=https://dev.azure.com/contoso projec
 
 ## Create web api pipeline
 
+Create the pipeline and branch policy by executing the following commands:
+
 ```cmd
 $repoName = 'WebApi'
 az pipelines folder create --path WebApi
@@ -30,6 +32,8 @@ az repos policy build create --blocking true --branch master --build-definition-
 ```
 
 ## Create website pipeline
+
+Create the pipeline and branch policy by executing the following commands:
 
 ```cmd
 $repoName = 'WebApi'
@@ -44,6 +48,14 @@ az repos policy build create --blocking true --branch master --build-definition-
 
 ## Create infrastructure pipeline
 
+The infrastructure pipeline uses the Pulumi build task which needs to be installed:
+
+````cmd
+az devops extension install --publisher-id pulumi --extension-id 5e8a7583-35d7-41e5-8a62-44e89a2835c5
+```
+
+Create the pipeline and branch policy by executing the following commands:
+
 ```cmd
 $repoName = 'WebApi'
 az pipelines folder create --path Infrastructure
@@ -54,3 +66,4 @@ $pipelineId = (az pipelines list --name Infrastructure.PR --query "[0].id" -o ts
 $repoId = (az repos list --query "[?name=='$repoName'].id" -o tsv)
 az repos policy build create --blocking true --branch master --build-definition-id $pipelineId --display-name 'Build' --enabled true --manual-queue-only false --queue-on-source-update-only false --repository-id $repoId --valid-duration 0 --path-filter /src/Infrastructure/**/*
 ```
+````
