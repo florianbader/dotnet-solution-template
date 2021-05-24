@@ -6,8 +6,8 @@ parameters:
     type: string
 
 jobs:
-  - deployment: Deployment_Infrastructure_${{ parameters.environment.key }}_${{ parameters.location.key }}
-    displayName: Deployment Infrastructure
+  - deployment: Preview_Infrastructure_${{ parameters.environment.key }}_${{ parameters.location.key }}
+    displayName: Preview Infrastructure
     workspace:
       clean: all
       environment: Deployment_${{ parameters.environment.key }}_${{ parameters.location.key }}
@@ -21,20 +21,20 @@ jobs:
                 testProjects: ''
 
             - task: Pulumi@1
-              displayName: Publish infrastructure
+              displayName: Preview infrastructure
               inputs:
                 azureSubscription: ${{ parameters.azureSubscriptionName }}
                 command: up
                 loginArgs: azblob://state
                 cwd: src/Infrastructure
                 stack: ${{ parameters.environment }}
-                args: --yes --skip-preview
+                args: --diff --show-replacement-steps
 
             - task: AzureCLI@2
-              displayName: Execute post deployment script
+              displayName: Preview post deployment script
               inputs:
                 azureSubscription: ${{ parameters.azureSubscriptionName }}
                 scriptType: pscore
                 scriptLocation: scriptPath
-                scriptPath: src/Infrastructure/Scripts/post-deployment.ps1
+                scriptPath: src/Infrastructure/Scripts/post-deployment.preview.ps1
                 arguments: -env ${{ parameters.environment }}

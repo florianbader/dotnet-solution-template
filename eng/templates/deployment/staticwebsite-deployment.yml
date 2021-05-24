@@ -48,4 +48,4 @@ jobs:
                 azureSubscription: ${{ parameters.azureSubscriptionName }}
                 scriptType: bash
                 scriptLocation: inlineScript
-                inlineScript: az storage blob upload-batch --account-name ${{ parameters.azureProductName }}${{ parameters.environment.key }}${{ parameters.location.key }}swstg -d '$web' -s $(artifactName)
+                inlineScript: az storage blob upload-batch --account-name ${{ parameters.azureProductName }}${{ parameters.environment.key }}${{ parameters.location.key }}swstg -d '$web' -s $(artifactName) --auth-mode login
