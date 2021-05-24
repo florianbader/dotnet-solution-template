@@ -42,11 +42,10 @@ jobs:
       runOnce:
         deploy:
           steps:
-            - task: AzureFileCopy@4
+            - task: AzureCLI@2
+              displayName: Deploy website
               inputs:
                 azureSubscription: ${{ parameters.azureSubscriptionName }}
-                SourcePath: '$(artifactName)/*'
-                Destination: AzureBlob
-                storage: ${{ parameters.azureProductName }}${{ parameters.environment.key }}${{ parameters.location.key }}swstg
-                ContainerName: $web
-                sasTokenTimeOutInMinutes: 30
+                scriptType: bash
+                scriptLocation: inlineScript
+                inlineScript: az storage blob upload-batch --account-name ${{ parameters.azureProductName }}${{ parameters.environment.key }}${{ parameters.location.key }}swstg -d $web -s $(artifactName)
