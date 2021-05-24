@@ -24,7 +24,7 @@ jobs:
       runOnce:
         deploy:
           steps:
-            - template: dotnet-build.yml
+            - template: ../dotnet-build.yml
               parameters:
                 buildProjects: src/Infrastructure/*.csproj
                 testProjects: ''
