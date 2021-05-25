@@ -21,4 +21,4 @@ jobs:
           parameters:
             filePath: $(artifactName)/main*
             tokens:
-              ApplicationUrl: https://webapi-${{ parameters.environment.key }}-euw-app.azurewebsites.net/
+              ApplicationUrl: https://webapi-${{ parameters.environment.key }}-euw-app.azurewebsites.net
