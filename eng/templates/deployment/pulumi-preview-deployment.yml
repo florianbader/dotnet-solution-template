@@ -52,7 +52,7 @@ jobs:
                 loginArgs: azblob://state
                 cwd: src/Infrastructure
                 stack: ${{ parameters.environment.key }}
-                args: --diff --show-replacement-steps
+                args: --diff --show-replacement-steps --refresh
 
             - task: AzureCLI@2
               displayName: Preview post deployment script

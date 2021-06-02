@@ -53,7 +53,7 @@ jobs:
                 loginArgs: azblob://state
                 cwd: src/Infrastructure
                 stack: ${{ parameters.environment.key }}
-                args: --yes --skip-preview
+                args: --yes --skip-preview --refresh
 
             - task: AzureCLI@2
               displayName: Execute post deployment script

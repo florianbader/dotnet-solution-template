@@ -40,15 +40,8 @@ namespace Infrastructure
 
         public void Build(AppServicePlanResource appServicePlanResource, StorageAccountResource storageAccountResource)
         {
-            if (appServicePlanResource.Id == null)
-            {
-                throw new InvalidOperationException("App service plan was not build.");
-            }
-
-            if (storageAccountResource.ConnectionString == null)
-            {
-                throw new InvalidOperationException("Storage account was not build.");
-            }
+            _ = appServicePlanResource.Id ?? throw new InvalidOperationException("App service plan was not build.");
+            _ = storageAccountResource.ConnectionString ?? throw new InvalidOperationException("Storage account was not build.");
 
             _appSettings.Add(new NameValuePairArgs { Name = "FUNCTIONS_EXTENSION_VERSION", Value = "~3" });
             _appSettings.Add(new NameValuePairArgs { Name = "FUNCTIONS_WORKER_RUNTIME", Value = "dotnet" });

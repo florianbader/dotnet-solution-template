@@ -15,15 +15,6 @@ namespace WebApi
         private static Action<DbContextOptionsBuilder> CreateOptionsAction(string connectionString)
             => (DbContextOptionsBuilder options) =>
             {
-                var shouldUseAccessToken = connectionString is not null
-                    && !connectionString.Contains("Integrated Security", StringComparison.OrdinalIgnoreCase)
-                    && !connectionString.Contains("User Id", StringComparison.OrdinalIgnoreCase);
-
-                if (shouldUseAccessToken)
-                {
-                    options.AddInterceptors(new AadTokenInjectorDbInterceptor());
-                }
-
                 options.UseSqlServer(connectionString);
                 options.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
             };

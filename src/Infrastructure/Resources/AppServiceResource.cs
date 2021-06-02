@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using Infrastructure.Resources;
 using Pulumi;
 using Pulumi.AzureNative.Web;
@@ -17,9 +19,11 @@ namespace Infrastructure
         {
         }
 
-        public Output<string>? PrincipalId => _appService?.Identity.Apply(i => i?.PrincipalId ?? string.Empty);
+        public Output<string> PrincipalId => _appService?.Identity.Apply(i => i?.PrincipalId ?? "11111111-1111-1111-1111-111111111111") // workaround for preview
+            ?? throw new InvalidOperationException("Could not find app service principal id");
 
-        public Output<string>? TenantId => _appService?.Identity.Apply(i => i?.TenantId ?? string.Empty);
+        public Output<string> TenantId => _appService?.Identity.Apply(i => i?.TenantId ?? "11111111-1111-1111-1111-111111111111") // workaround for preview
+            ?? throw new InvalidOperationException("Could not find app service tenant id");
 
         public void AddConfiguration(string key, Output<string>? value)
         {
@@ -31,9 +35,12 @@ namespace Infrastructure
             _appSettings.Add(new NameValuePairArgs { Name = key, Value = value });
         }
 
-        public void AddConfiguration(IConfiguration configurationProvider)
+        public void AddConfiguration(IConfiguration configurationProvider, params string[] configurations)
         {
-            foreach (var (key, value) in configurationProvider.Configuration)
+            var configurationKeys = new HashSet<string>(configurations);
+            var configuration = configurationProvider.Configuration.Where(c => configurationKeys.Contains(c.Key));
+
+            foreach (var (key, value) in configuration)
             {
                 AddConfiguration(key, value);
             }
@@ -41,10 +48,7 @@ namespace Infrastructure
 
         public void Build(AppServicePlanResource appServicePlanResource)
         {
-            if (appServicePlanResource.Id == null)
-            {
-                throw new InvalidOperationException("App service plan was not build");
-            }
+            _ = appServicePlanResource.Id ?? throw new InvalidOperationException("App service plan was not build");
 
             _appService = new WebApp(Name, new WebAppArgs
             {

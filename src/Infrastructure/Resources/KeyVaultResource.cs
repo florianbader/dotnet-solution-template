@@ -10,7 +10,6 @@ namespace Infrastructure
 {
     public class KeyVaultResource : AbstractResource, IConfiguration
     {
-        private readonly InputList<AccessPolicyEntryArgs> _accessPolicies = new();
         private readonly Dictionary<string, Secret> _secrets = new();
         private Vault? _keyVault;
 
@@ -30,36 +29,21 @@ namespace Infrastructure
 
         public Output<string>? this[string key] => _secrets[key].Properties.Apply(p => $"@Microsoft.KeyVault(SecretUri={p.SecretUriWithVersion})");
 
-        public void AddAccessPolicy(Output<string>? tenantId, Output<string>? principalId)
+        public void AddAccessPolicy(string accessPolicyName, Output<string>? tenantId, Output<string>? principalId)
         {
-            if (tenantId == null)
-            {
-                throw new ArgumentNullException(nameof(tenantId));
-            }
+            _ = tenantId ?? throw new ArgumentNullException(nameof(tenantId));
+            _ = principalId ?? throw new ArgumentNullException(nameof(principalId));
+            _ = _keyVault ?? throw new InvalidOperationException("Key vault needs to be build before adding access policies.");
 
-            if (principalId == null)
+            // workaround because access policy currently cannot be created separately with azure native
+            // https://github.com/pulumi/pulumi-azure-native/issues/594
+            _ = new Pulumi.Azure.KeyVault.AccessPolicy("AccessPolicy" + accessPolicyName, new Pulumi.Azure.KeyVault.AccessPolicyArgs
             {
-                throw new ArgumentNullException(nameof(principalId));
-            }
-
-            if (_keyVault == null)
-            {
-                throw new InvalidOperationException("Key vault needs to be build before adding secrets.");
-            }
-
-            _accessPolicies.Add(
-                new AccessPolicyEntryArgs
-                {
-                    TenantId = tenantId,
-                    ObjectId = principalId,
-                    Permissions = new PermissionsArgs
-                    {
-                        Secrets =
-                        {
-                            "get", "list", "set", "delete",
-                        },
-                    },
-                });
+                KeyVaultId = _keyVault.Id,
+                TenantId = tenantId,
+                ObjectId = principalId,
+                SecretPermissions = new[] { "get", "list", },
+            });
         }
 
         public void AddSecrets(ISecrets secrets)
@@ -90,17 +74,14 @@ namespace Infrastructure
                         Name = config.Require("sku") == "standard" ? SkuName.Standard : SkuName.Premium,
                     },
                     TenantId = projectConfig.Require("tenantId"),
-                    AccessPolicies = _accessPolicies,
+                    AccessPolicies = Array.Empty<AccessPolicyEntryArgs>(),
                 },
             });
         }
 
         public Secret SetSecret(string secretName, string secretValue)
         {
-            if (_keyVault == null)
-            {
-                throw new InvalidOperationException("Key vault needs to be build before adding secrets.");
-            }
+            _ = _keyVault ?? throw new InvalidOperationException("Key vault needs to be build before adding secrets.");
 
             var secret = new Secret(secretName, new SecretArgs
             {
@@ -119,10 +100,7 @@ namespace Infrastructure
 
         public Secret SetSecret(string secretName, Output<string> secretValue)
         {
-            if (_keyVault == null)
-            {
-                throw new InvalidOperationException("Key vault needs to be build before adding secrets.");
-            }
+            _ = _keyVault ?? throw new InvalidOperationException("Key vault needs to be build before adding secrets.");
 
             var secret = new Secret(secretName, new SecretArgs
             {
