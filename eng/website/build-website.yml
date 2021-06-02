@@ -13,5 +13,9 @@ jobs:
         parameters:
           buildProject: src/Website/
           publishArtifactName: Website
-          shouldTest: ${{ parameters.shouldTest }}
-          shouldPublishCodeCoverage: false
+          # always test on master
+          ${{ if eq(variables['SourceBranch'], 'refs/heads/master') }}:
+            shouldTest: true
+          ${{ if ne(variables['SourceBranch'], 'refs/heads/master') }}:
+            shouldTest: ${{ parameters.shouldTest }}
+          shouldPublishCodeCoverage: true

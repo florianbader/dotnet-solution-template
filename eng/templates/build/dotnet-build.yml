@@ -98,7 +98,7 @@ steps:
         displayName: Run unit tests
         inputs:
           command: test
-          arguments: -c ${{ parameters.buildConfiguration }} --no-build --filter ${{ parameters.testsFilter }} /p:CollectCoverage /p:CoverletOutputFormat=cobertura /p:CoverletOutput=$(Agent.TempDirectory)/coverage /p:SkipAutoProps=true /p:ExcludeByAttribute="Obsolete%2cGeneratedCodeAttribute%2cCompilerGeneratedAttribute" ${{ parameters.testAdditionalArguments }}
+          arguments: -c ${{ parameters.buildConfiguration }} --no-build --filter ${{ parameters.testsFilter }} /p:CollectCoverage /p:CoverletOutputFormat=cobertura /p:CoverletOutput=$(Agent.TempDirectory)/coverage /p:SkipAutoProps=true /p:ExcludeByAttribute="Obsolete%2cGeneratedCodeAttribute%2cCompilerGeneratedAttribute" ${{ parameters.testAdditionalArguments }} -- RunConfiguration.TreatNoTestsAsError=true
           testRunTitle: Unit Tests
           publishTestResults: true
           projects: |

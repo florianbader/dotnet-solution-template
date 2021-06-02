@@ -11,14 +11,11 @@ namespace Infrastructure
     public class SqlServerResource : AbstractResource, ISecrets, IConfiguration
     {
         private readonly Output<string> _currentUserObjectId;
-        private Output<string>? _password;
         private string? _connectionString;
+        private Output<string>? _password;
 
         public SqlServerResource(ResourceGroupResource resourceGroup, Output<string> currentUserObjectId)
-            : base(resourceGroup, "sqls")
-        {
-            _currentUserObjectId = currentUserObjectId;
-        }
+            : base(resourceGroup, "sqls") => _currentUserObjectId = currentUserObjectId;
 
         public IEnumerable<(string Key, Output<string>? Value)> Configuration
             => new (string Key, Output<string>? Value)[]
