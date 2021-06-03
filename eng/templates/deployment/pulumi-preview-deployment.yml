@@ -44,6 +44,9 @@ jobs:
                   AZURE_STORAGE_KEY=$(az storage account keys list -n "$AZURE_STORAGE_ACCOUNT" --query "[0].value" -o tsv)
                   echo "##vso[task.setvariable variable=AZURE_STORAGE_KEY;isOutput=false]$AZURE_STORAGE_KEY"
 
+                  ARM_MSI_ENDPOINT=false
+                  echo "##vso[task.setvariable variable=ARM_MSI_ENDPOINT;isOutput=false]$ARM_MSI_ENDPOINT"
+
             - task: Pulumi@1
               displayName: Preview infrastructure
               inputs:
