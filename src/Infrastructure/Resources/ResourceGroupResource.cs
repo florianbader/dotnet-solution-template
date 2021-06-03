@@ -9,7 +9,6 @@ namespace Infrastructure.Resources
         public ResourceGroupResource(bool nameHasEnvironment = true)
         {
             var azureNativeConfig = new Config("azure-native");
-            var azureConfig = new Config("azure");
             var projectConfig = new Config("project");
 
             ProductName = projectConfig.Require("productName");
