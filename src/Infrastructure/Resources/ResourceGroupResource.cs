@@ -13,7 +13,7 @@ namespace Infrastructure.Resources
             var projectConfig = new Config("project");
 
             ProductName = projectConfig.Require("productName");
-            Environment = azureConfig.Require("environment");
+            Environment = projectConfig.Require("environment");
             Location = azureNativeConfig.Require("location");
             Name = GetResourceName("rg", nameHasEnvironment: nameHasEnvironment);
 
