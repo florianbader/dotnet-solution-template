@@ -61,4 +61,4 @@ jobs:
                 scriptType: pscore
                 scriptLocation: scriptPath
                 scriptPath: src/Infrastructure/Scripts/post-deployment.preview.ps1
-                arguments: -env ${{ parameters.environment.key }}
+                arguments: -environment ${{ parameters.environment.key }}
