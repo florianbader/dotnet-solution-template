@@ -55,6 +55,7 @@ jobs:
                 command: login
                 loginArgs: azblob://state
                 cwd: src/Infrastructure
+                stack: ${{ parameters.environment.key }}
 
             - task: Pulumi@1
               displayName: Publish infrastructure
