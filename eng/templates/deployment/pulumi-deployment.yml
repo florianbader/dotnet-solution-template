@@ -45,7 +45,7 @@ jobs:
                   AZURE_STORAGE_KEY=$(az storage account keys list -n "$AZURE_STORAGE_ACCOUNT" --query "[0].value" -o tsv)
                   echo "##vso[task.setvariable variable=AZURE_STORAGE_KEY;isOutput=false]$AZURE_STORAGE_KEY"
 
-                  PULUMI_CONFIG_PASSPHRASE = $(az keyvault secret show -n PulumiPassphrase --vault-name webapi-${{ parameters.environment.key }}-euw-kv --query value -o tsv)
+                  PULUMI_CONFIG_PASSPHRASE=(az keyvault secret show -n PulumiPassphrase --vault-name webapi-${{ parameters.environment.key }}-euw-kv --query value -o tsv)
                   echo "##vso[task.setvariable variable=PULUMI_CONFIG_PASSPHRASE;isOutput=false]$PULUMI_CONFIG_PASSPHRASE"
 
             - task: Pulumi@1
