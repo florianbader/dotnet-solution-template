@@ -19,7 +19,7 @@ jobs:
     displayName: Preview Infrastructure
     workspace:
       clean: all
-    environment: Deployment_${{ parameters.environment.key }}_${{ parameters.location.key }}
+    environment: Deployment_Preview_${{ parameters.environment.key }}_${{ parameters.location.key }}
     variables:
       - group: Pulumi.${{ parameters.environment.key }}
     strategy:
@@ -52,7 +52,12 @@ jobs:
                 loginArgs: azblob://state
                 cwd: src/Infrastructure
                 stack: ${{ parameters.environment.key }}
-                args: --diff --show-replacement-steps --refresh
+                args: --diff --show-replacement-steps --refresh --suppress-outputs
+
+            - script: |
+                pulumi stack output --json > outputs.json
+              displayName: Export infrastructure outputs
+              workingDirectory: src/Infrastructure/Scripts/
 
             - task: AzureCLI@2
               displayName: Preview post deployment script

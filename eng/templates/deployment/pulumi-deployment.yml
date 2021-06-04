@@ -53,7 +53,22 @@ jobs:
                 loginArgs: azblob://state
                 cwd: src/Infrastructure
                 stack: ${{ parameters.environment.key }}
-                args: --yes --skip-preview --refresh
+                args: --yes --skip-preview --refresh --suppress-outputs
+
+            - script: |
+                pulumi stack output --json > outputs.json
+              displayName: Export infrastructure outputs
+              workingDirectory: src/Infrastructure/Scripts/
+
+            - task: AzurePowerShell@5
+              displayName: Execute Azure PowerShell post deployment script
+              inputs:
+                azureSubscription: ${{ parameters.azureSubscriptionName }}
+                azurePowerShellVersion: LatestVersion
+                scriptType: filePath
+                scriptPath: src/Infrastructure/Scripts/azure-post-deployment.ps1
+                scriptArguments: -environment ${{ parameters.environment.key }}
+                pwsh: true
 
             - task: AzureCLI@2
               displayName: Execute post deployment script

@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 using System.IO;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -22,14 +23,20 @@ namespace WebApi
 
         public static void Main(string[] args)
         {
+            Activity.DefaultIdFormat = ActivityIdFormat.W3C;
+            Activity.ForceDefaultIdFormat = true;
+
             var configuration = new ConfigurationBuilder()
                 .SetBasePath(Directory.GetCurrentDirectory())
                 .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
+#if DEBUG
+                .AddJsonFile("appsettings.Development.json", optional: true, reloadOnChange: true)
+#endif
                 .AddEnvironmentVariables()
+                .AddUserSecrets<Startup>()
                 .Build();
 
             Log.Logger = new LoggerConfiguration()
-                .MinimumLevel.Verbose()
                 .Enrich.WithExceptionDetails()
                 .Enrich.FromLogContext()
                 .WriteTo.Console()
@@ -38,7 +45,7 @@ namespace WebApi
 
             try
             {
-                Log.Information("Starting up");
+                Log.Debug("Starting up");
                 CreateHostBuilder(configuration, args).Build().Run();
             }
             catch (Exception ex)

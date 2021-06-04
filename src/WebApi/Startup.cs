@@ -74,7 +74,7 @@ namespace WebApi
 
             services.AddProblemDetails();
 
-            services.AddApplicationInsightsTelemetry(Configuration);
+            services.AddApplicationInsightsTelemetry();
 
             services.AddResponseCaching();
 

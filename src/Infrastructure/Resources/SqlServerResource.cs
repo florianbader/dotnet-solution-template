@@ -47,20 +47,22 @@ namespace Infrastructure
                 Version = "12.0",
                 AdministratorLogin = username,
                 AdministratorLoginPassword = _password,
-                Administrators = new ServerExternalAdministratorArgs
-                {
-                    AdministratorType = AdministratorType.ActiveDirectory,
-                    TenantId = projectConfig.Require("tenantId"),
-                    Sid = _currentUserObjectId,
-                    AzureADOnlyAuthentication = true,
-                    Login = "SqlServerAdmin",
-                    PrincipalType = PrincipalType.User,
-                },
+            });
+
+            _ = new ServerAzureADAdministrator(Name + "admin", new ServerAzureADAdministratorArgs
+            {
+                ResourceGroupName = ResourceGroupName,
+                ServerName = Name,
+                AdministratorType = AdministratorType.ActiveDirectory,
+                TenantId = projectConfig.Require("tenantId"),
+                Sid = _currentUserObjectId,
+                AdministratorName = AdministratorType.ActiveDirectory.ToString(),
+                Login = "SqlServerAdmin",
             });
 
             _ = new Database(databaseName, new DatabaseArgs
             {
-                DatabaseName = sqlServer.Name,
+                DatabaseName = databaseName,
                 ResourceGroupName = ResourceGroupName,
                 ServerName = Name,
                 Sku = new SkuArgs

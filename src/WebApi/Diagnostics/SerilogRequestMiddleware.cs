@@ -20,15 +20,7 @@ namespace WebApi.Diagnostics
             _logEventLevel = logEventLevel;
         }
 
-        public Task Invoke(HttpContext httpContext)
-        {
-            if (httpContext == null)
-            {
-                throw new ArgumentNullException(nameof(httpContext));
-            }
-
-            return InvokeInternalAsync(httpContext);
-        }
+        public Task Invoke(HttpContext httpContext) => InvokeInternalAsync(httpContext ?? throw new ArgumentNullException(nameof(httpContext)));
 
         private async Task InvokeInternalAsync(HttpContext httpContext)
         {
