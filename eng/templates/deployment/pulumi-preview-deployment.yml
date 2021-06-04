@@ -32,7 +32,7 @@ jobs:
                 testProjects: ''
 
             - task: AzureCLI@2
-              displayName: Login Pulumi
+              displayName: Configure Pulumi
               inputs:
                 azureSubscription: ${{ parameters.azureSubscriptionName }}
                 scriptType: bash
@@ -44,6 +44,17 @@ jobs:
                   AZURE_STORAGE_KEY=$(az storage account keys list -n "$AZURE_STORAGE_ACCOUNT" --query "[0].value" -o tsv)
                   echo "##vso[task.setvariable variable=AZURE_STORAGE_KEY;isOutput=false]$AZURE_STORAGE_KEY"
 
+                  PULUMI_CONFIG_PASSPHRASE = $(az keyvault secret show -n PulumiPassphrase --vault-name webapi-${{ parameters.environment.key }}-euw-kv --query value -o tsv)
+                  echo "##vso[task.setvariable variable=PULUMI_CONFIG_PASSPHRASE;isOutput=false]$PULUMI_CONFIG_PASSPHRASE"
+
+            - task: Pulumi@1
+              displayName: Login Pulumi
+              inputs:
+                azureSubscription: ${{ parameters.azureSubscriptionName }}
+                command: login
+                loginArgs: azblob://state
+                cwd: src/Infrastructure
+
             - task: Pulumi@1
               displayName: Preview infrastructure
               inputs:
@@ -52,10 +63,10 @@ jobs:
                 loginArgs: azblob://state
                 cwd: src/Infrastructure
                 stack: ${{ parameters.environment.key }}
-                args: --diff --show-replacement-steps --refresh --suppress-outputs
+                args: --diff --show-replacement-steps --refresh --suppress-outputs  --secret-provider passphrase
 
             - script: |
-                pulumi stack output --json > outputs.json
+                pulumi stack output --json --show-secrets > outputs.json
               displayName: Export infrastructure outputs
               workingDirectory: src/Infrastructure/Scripts/
 

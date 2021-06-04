@@ -33,7 +33,7 @@ jobs:
                 testProjects: ''
 
             - task: AzureCLI@2
-              displayName: Login Pulumi
+              displayName: Configure Pulumi
               inputs:
                 azureSubscription: ${{ parameters.azureSubscriptionName }}
                 scriptType: bash
@@ -49,6 +49,14 @@ jobs:
                   echo "##vso[task.setvariable variable=PULUMI_CONFIG_PASSPHRASE;isOutput=false]$PULUMI_CONFIG_PASSPHRASE"
 
             - task: Pulumi@1
+              displayName: Login Pulumi
+              inputs:
+                azureSubscription: ${{ parameters.azureSubscriptionName }}
+                command: login
+                loginArgs: azblob://state
+                cwd: src/Infrastructure
+
+            - task: Pulumi@1
               displayName: Publish infrastructure
               inputs:
                 azureSubscription: ${{ parameters.azureSubscriptionName }}
@@ -56,10 +64,10 @@ jobs:
                 loginArgs: azblob://state
                 cwd: src/Infrastructure
                 stack: ${{ parameters.environment.key }}
-                args: --yes --skip-preview --refresh --suppress-outputs
+                args: --yes --skip-preview --refresh --suppress-outputs --secret-provider passphrase
 
             - script: |
-                pulumi stack output --json > outputs.json
+                pulumi stack output --json --show-secrets > outputs.json
               displayName: Export infrastructure outputs
               workingDirectory: src/Infrastructure/Scripts/
               env:
