@@ -62,7 +62,7 @@ jobs:
                 loginArgs: azblob://state
                 cwd: src/Infrastructure
                 stack: ${{ parameters.environment.key }}
-                args: --yes --skip-preview --refresh --suppress-outputs --secret-provider passphrase
+                args: --yes --skip-preview --refresh --suppress-outputs
 
             - script: |
                 pulumi stack output --json --show-secrets > outputs.json
