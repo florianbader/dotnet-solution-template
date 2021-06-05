@@ -44,6 +44,10 @@ steps:
         Write-Host "Creating Azure SQL firewall rule for ip $ip"
         az sql server firewall-rule create -g "webapi-${{ parameters.environment.key }}-${{ parameters.location.key }}-rg" -s "webapi-${{ parameters.environment.key }}-${{ parameters.location.key }}-sqls" -n "BuildAgent" --start-ip-address $ip --end-ip-address $ip
 
+  - script: |
+      echo "${{ parameters.scriptType }}"
+      echo "${{ parameters.inlineScript }}"
+
   - task: AzurePowerShell@5
     displayName: ${{ parameters.name }}
     inputs:
