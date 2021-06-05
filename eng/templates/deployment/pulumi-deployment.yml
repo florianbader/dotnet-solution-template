@@ -67,9 +67,9 @@ jobs:
             - script: |
                 pulumi stack output --json --show-secrets > outputs.json
               displayName: Export infrastructure outputs
-              workingDirectory: src/Infrastructure/Scripts/
+              workingDirectory: src/Infrastructure/
               env:
-                PULUMI_ACCESS_TOKEN: $(pulumi.access.token)
+                PULUMI_CONFIG_PASSPHRASE: $(PULUMI_CONFIG_PASSPHRASE)
 
             - task: AzurePowerShell@5
               displayName: Execute Azure PowerShell post deployment script
