@@ -44,10 +44,6 @@ steps:
         Write-Host "Creating Azure SQL firewall rule for ip $ip"
         az sql server firewall-rule create -g "webapi-${{ parameters.environment.key }}-${{ parameters.location.key }}-rg" -s "webapi-${{ parameters.environment.key }}-${{ parameters.location.key }}-sqls" -n "BuildAgent" --start-ip-address $ip --end-ip-address $ip
 
-  - script: |
-      echo "${{ parameters.scriptType }}"
-      echo "${{ parameters.inlineScript }}"
-
   - task: AzurePowerShell@5
     displayName: ${{ parameters.name }}
     inputs:
@@ -55,19 +51,20 @@ steps:
       azurePowerShellVersion: LatestVersion
       pwsh: true
       scriptType: inlineScript
-
       ${{ if eq(parameters.scriptType, 'inlineScript') }}:
         inlineScript: |
           Install-Module -Name SqlServer -Force -Scope CurrentUser
           $token = (Get-AzAccessToken -ResourceUrl https://database.windows.net).Token
 
-          Invoke-SqlCmd -ServerInstance "webapi-${{ parameters.environment.key }}-${{ parameters.location.key }}-sqls" -Database "webapi-${{ parameters.environment.key }}-${{ parameters.location.key }}-sqld" -AccessToken "$token" -Query "${{ parameters.inlineScript }}"
+          Invoke-SqlCmd -ServerInstance "webapi-${{ parameters.environment.key }}-${{ parameters.location.key }}-sqls" -Database "webapi-${{ parameters.environment.key }}-${{ parameters.location.key }}-sqld" -AccessToken "$token" -Query "${{ parameters.inlineScript }}" -Verbose
       ${{ if eq(parameters.scriptType, 'scriptPath') }}:
         inlineScript: |
+          Write-Host 'Install sql server powershell module'
           Install-Module -Name SqlServer -Force -Scope CurrentUser
           $token = (Get-AzAccessToken -ResourceUrl https://database.windows.net).Token
+          Write-Host '$token'
 
-          Invoke-SqlCmd -ServerInstance "webapi-${{ parameters.environment.key }}-${{ parameters.location.key }}-sqls" -Database "webapi-${{ parameters.environment.key }}-${{ parameters.location.key }}-sqld" -AccessToken "$token" -InputFile "${{ parameters.scriptPath }}"
+          Invoke-SqlCmd -ServerInstance "webapi-${{ parameters.environment.key }}-${{ parameters.location.key }}-sqls" -Database "webapi-${{ parameters.environment.key }}-${{ parameters.location.key }}-sqld" -AccessToken "$token" -InputFile "${{ parameters.scriptPath }}" -Verbose
 
   - task: AzureCLI@2
     displayName: Delete Azure SQL firewall rule for build agent
