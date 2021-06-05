@@ -52,7 +52,7 @@ steps:
       azurePowerShellVersion: LatestVersion
       pwsh: true
       scriptType: inlineScript
-      inlineScript: |
+      inline: |
         Install-Module -Name SqlServer -Force -Scope CurrentUser
         $token = (Get-AzAccessToken -ResourceUrl https://database.windows.net).Token
 
@@ -66,13 +66,13 @@ steps:
       pwsh: true
       scriptType: inlineScript
       ${{ if eq(parameters.scriptType, 'inlineScript') }}:
-        inlineScript: |
+        inline: |
           Install-Module -Name SqlServer -Force -Scope CurrentUser
           $token = (Get-AzAccessToken -ResourceUrl https://database.windows.net).Token
 
           Invoke-SqlCmd -ServerInstance "webapi-${{ parameters.environment.key }}-${{ parameters.location.key }}-sqls" -Database "webapi-${{ parameters.environment.key }}-${{ parameters.location.key }}-sqld" -AccessToken "$token" -Query "${{ parameters.inlineScript }}" -Verbose
       ${{ if eq(parameters.scriptType, 'scriptPath') }}:
-        inlineScript: |
+        inline: |
           Write-Host 'Install sql server powershell module'
           Install-Module -Name SqlServer -Force -Scope CurrentUser
           $token = (Get-AzAccessToken -ResourceUrl https://database.windows.net).Token
