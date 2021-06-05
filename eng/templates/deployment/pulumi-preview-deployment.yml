@@ -19,7 +19,7 @@ jobs:
     displayName: Preview Infrastructure
     workspace:
       clean: all
-    environment: Deployment_Preview_${{ parameters.environment.key }}_${{ parameters.location.key }}
+    environment: Deployment_${{ parameters.environment.key }}_${{ parameters.location.key }}
     variables:
       - group: Pulumi.${{ parameters.environment.key }}
     strategy:
