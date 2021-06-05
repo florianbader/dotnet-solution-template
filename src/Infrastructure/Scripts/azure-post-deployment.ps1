@@ -6,6 +6,9 @@ $rootDirectory = "$PSScriptRoot/../../../"
 
 $pulumiOutputs = (Get-Content "$rootDirectory/src/Infrastructure/outputs.json" | ConvertFrom-Json)
 
+Install-Module -Name SqlServer
+Import-Module -Name SqlServer
+
 $token = (Get-AzAccessToken -ResourceUrl https://database.windows.net).Token
 
 $query = "IF NOT EXISTS(SELECT 1 FROM sys.database_principals WHERE name ='webapi-$environment-euw-app')
