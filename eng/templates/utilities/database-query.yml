@@ -54,11 +54,20 @@ steps:
       azureSubscription: ${{ parameters.azureSubscriptionName }}
       azurePowerShellVersion: LatestVersion
       pwsh: true
-      scriptType: ${{ parameters.scriptType }}
+      scriptType: inlineScript
+
       ${{ if eq(parameters.scriptType, 'inlineScript') }}:
-        inlineScript: ${{ parameters.inlineScript }}
+        inlineScript: |
+          Install-Module -Name SqlServer -Force -Scope CurrentUser
+          $token = (Get-AzAccessToken -ResourceUrl https://database.windows.net).Token
+
+          Invoke-SqlCmd -ServerInstance "webapi-${{ parameters.environment.key }}-${{ parameters.location.key }}-sqls" -Database "webapi-${{ parameters.environment.key }}-${{ parameters.location.key }}-sqld" -AccessToken "$token" -Query "${{ parameters.inlineScript }}"
       ${{ if eq(parameters.scriptType, 'scriptPath') }}:
-        scriptPath: ${{ parameters.scriptPath }}
+        inlineScript: |
+          Install-Module -Name SqlServer -Force -Scope CurrentUser
+          $token = (Get-AzAccessToken -ResourceUrl https://database.windows.net).Token
+
+          Invoke-SqlCmd -ServerInstance "webapi-${{ parameters.environment.key }}-${{ parameters.location.key }}-sqls" -Database "webapi-${{ parameters.environment.key }}-${{ parameters.location.key }}-sqld" -AccessToken "$token" -InputFile "${{ parameters.scriptPath }}"
 
   - task: AzureCLI@2
     displayName: Delete Azure SQL firewall rule for build agent
