@@ -29,7 +29,7 @@ parameters:
   - name: location
     type: object
     default:
-      key: ${{ parameters.location.key }}
+      key: euw
       name: West Europe
 
 steps:
