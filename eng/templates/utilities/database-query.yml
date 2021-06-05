@@ -11,9 +11,11 @@ parameters:
 
   - name: scriptPath
     type: string
+    default: ''
 
   - name: inlineScript
     type: string
+    default: ''
 
 steps:
   - task: AzureCLI@2
