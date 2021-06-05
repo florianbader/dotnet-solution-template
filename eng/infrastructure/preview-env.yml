@@ -6,7 +6,7 @@ parameters:
       name: Development
 
 jobs:
-  - template: /eng/templates/deployment/pulumi-deployment.yml
+  - template: /eng/templates/deployment/pulumi-preview-deployment.yml
     parameters:
       azureSubscriptionName: $(azureSubscriptionName)
       environment: ${{ parameters.environment }}

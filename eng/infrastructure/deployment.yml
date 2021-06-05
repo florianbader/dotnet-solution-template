@@ -1,4 +1,13 @@
 stages:
+  - stage: Dev_Preview
+    displayName: Development (Preview)
+    jobs:
+      - template: /eng/infrastructure/preview-env.yml
+        parameters:
+          environment:
+            key: dev
+            name: Development
+
   - stage: Dev
     displayName: Development
     jobs:
@@ -8,6 +17,15 @@ stages:
             key: dev
             name: Development
 
+  - stage: Prev_Preview
+    displayName: Preview (Preview)
+    jobs:
+      - template: /eng/infrastructure/preview-env.yml
+        parameters:
+          environment:
+            key: prev
+            name: Preview
+
   - stage: Prev
     displayName: Preview
     jobs:
@@ -16,6 +34,15 @@ stages:
           environment:
             key: prev
             name: Preview
+
+  - stage: Prod_Preview
+    displayName: Production (Preview)
+    jobs:
+      - template: /eng/infrastructure/preview-env.yml
+        parameters:
+          environment:
+            key: prod
+            name: Production
 
   - stage: Prod
     displayName: Production
