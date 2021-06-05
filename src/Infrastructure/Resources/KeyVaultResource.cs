@@ -11,13 +11,11 @@ namespace Infrastructure
     public class KeyVaultResource : AbstractResource, IConfiguration
     {
         private readonly Dictionary<string, Secret> _secrets = new();
-        private readonly Output<string> _currentUserObjectId;
         private Vault? _keyVault;
 
-        public KeyVaultResource(ResourceGroupResource resourceGroup, Output<string> currentUserObjectId)
+        public KeyVaultResource(ResourceGroupResource resourceGroup)
             : base(resourceGroup, "kv")
         {
-            _currentUserObjectId = currentUserObjectId;
         }
 
         public IEnumerable<(string Key, Output<string>? Value)> Configuration
@@ -81,8 +79,6 @@ namespace Infrastructure
                     AccessPolicies = Array.Empty<AccessPolicyEntryArgs>(),
                 },
             });
-
-            AddAccessPolicy("CurrentUser", Output.Create(tenantId), _currentUserObjectId);
         }
 
         public Secret SetSecret(string secretName, string secretValue)
