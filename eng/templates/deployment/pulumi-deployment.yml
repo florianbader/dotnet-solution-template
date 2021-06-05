@@ -73,6 +73,7 @@ jobs:
             - template: /eng/templates/utilities/database-query.yml
               parameters:
                 name: Create app permissions in Azure SQL
+                azureSubscriptionName: ${{ parameters.azureSubscriptionName }}
                 environment: ${{ parameters.environment }}
                 location: ${{ parameters.location }}
                 scriptType: inlineScript
