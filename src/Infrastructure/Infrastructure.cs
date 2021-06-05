@@ -9,7 +9,8 @@ namespace Infrastructure
         public Infrastructure()
         {
             var currentConfig = Output.Create(GetClientConfig.InvokeAsync());
-            var currentUserObjectId = currentConfig.Apply(c => c.ObjectId);
+            var currentUserObjectId = currentConfig.Apply(c => c.ClientId);
+            var tenantId = currentConfig.Apply(c => c.TenantId);
 
             var resourceGroup = new ResourceGroupResource();
 

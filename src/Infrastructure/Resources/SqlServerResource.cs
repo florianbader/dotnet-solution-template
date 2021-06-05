@@ -10,12 +10,17 @@ namespace Infrastructure
 {
     public class SqlServerResource : AbstractResource, ISecrets, IConfiguration
     {
+        private readonly Output<string> _tenantId;
         private readonly Output<string> _currentUserObjectId;
         private string? _connectionString;
         private Output<string>? _password;
 
-        public SqlServerResource(ResourceGroupResource resourceGroup, Output<string> currentUserObjectId)
-            : base(resourceGroup, "sqls") => _currentUserObjectId = currentUserObjectId;
+        public SqlServerResource(ResourceGroupResource resourceGroup, Output<string> tenantId, Output<string> currentUserObjectId)
+            : base(resourceGroup, "sqls")
+        {
+            _tenantId = tenantId;
+            _currentUserObjectId = currentUserObjectId;
+        }
 
         public IEnumerable<(string Key, Output<string>? Value)> Configuration
             => new (string Key, Output<string>? Value)[]
@@ -31,7 +36,6 @@ namespace Infrastructure
 
         public void Build()
         {
-            var projectConfig = new Config("project");
             var config = new Config("sqlserver");
 
             var databaseName = GetResourceName("sqld");
@@ -54,7 +58,7 @@ namespace Infrastructure
                 ResourceGroupName = ResourceGroupName,
                 ServerName = Name,
                 AdministratorType = AdministratorType.ActiveDirectory,
-                TenantId = projectConfig.Require("tenantId"),
+                TenantId = _tenantId,
                 Sid = _currentUserObjectId,
                 AdministratorName = AdministratorType.ActiveDirectory.ToString(),
                 Login = "SqlServerAdmin",

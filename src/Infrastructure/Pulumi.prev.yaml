@@ -14,7 +14,6 @@ config:
   keyvault:sku: standard
   project:environment: prev
   project:productName: webapi
-  project:tenantId: 1f724501-4ae7-4ed7-820a-d296c587d078
   servicebus:sku: basic
   sqlserver:edition: Basic
   sqlserver:password:
