@@ -6,9 +6,7 @@ $rootDirectory = "$PSScriptRoot/../../../"
 
 $pulumiOutputs = (Get-Content "$rootDirectory/src/Infrastructure/outputs.json" | ConvertFrom-Json)
 
-Install-PackageProvider -Name NuGet -Force -Scope CurrentUser
 Install-Module -Name SqlServer -Force -Scope CurrentUser
-Import-Module -Name SqlServer
 
 $token = (Get-AzAccessToken -ResourceUrl https://database.windows.net).Token
 
