@@ -13,7 +13,7 @@ namespace Infrastructure
 
             var resourceGroup = new ResourceGroupResource();
 
-            var keyVault = new KeyVaultResource(resourceGroup);
+            var keyVault = new KeyVaultResource(resourceGroup, currentUserObjectId);
 
             var appServicePlan = new AppServicePlanResource(resourceGroup);
             appServicePlan.Build();
