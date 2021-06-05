@@ -1,5 +1,6 @@
 param (
-    [string] [Parameter(Mandatory = $true)] $environment
+    [string] [Parameter(Mandatory = $true)] $environment,
+    [string] [Parameter(Mandatory = $true)] $location
 )
 
 $rootDirectory = "$PSScriptRoot/../../../"
