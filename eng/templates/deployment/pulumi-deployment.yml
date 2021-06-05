@@ -76,7 +76,6 @@ jobs:
                 azureSubscriptionName: ${{ parameters.azureSubscriptionName }}
                 environment: ${{ parameters.environment }}
                 location: ${{ parameters.location }}
-                scriptType: inlineScript
                 inlineScript: |
                   IF NOT EXISTS(SELECT 1 FROM sys.database_principals WHERE name ='webapi-${{ parameters.environment.key }}-${{ parameters.location.key }}-app')
                   BEGIN
