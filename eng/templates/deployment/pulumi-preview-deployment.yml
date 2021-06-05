@@ -67,6 +67,8 @@ jobs:
                 pulumi stack output --json --show-secrets > outputs.json
               displayName: Export infrastructure outputs
               workingDirectory: src/Infrastructure/Scripts/
+              env:
+                PULUMI_CONFIG_PASSPHRASE: $(PULUMI_CONFIG_PASSPHRASE)
 
             - task: AzureCLI@2
               displayName: Preview post deployment script
