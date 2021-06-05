@@ -14,7 +14,7 @@ namespace Infrastructure
 
             var resourceGroup = new ResourceGroupResource();
 
-            var keyVault = new KeyVaultResource(resourceGroup);
+            var keyVault = new KeyVaultResource(resourceGroup, tenantId);
 
             var appServicePlan = new AppServicePlanResource(resourceGroup);
             appServicePlan.Build();
@@ -36,14 +36,14 @@ namespace Infrastructure
             applicationInsights.Build();
             appService.AddConfiguration(applicationInsights, new[] { "APPINSIGHTS_INSTRUMENTATIONKEY" });
 
-            var sqlDatabase = new SqlServerResource(resourceGroup, currentUserObjectId);
+            var sqlDatabase = new SqlServerResource(resourceGroup, tenantId, currentUserObjectId);
             sqlDatabase.Build();
             keyVault.AddSecrets(sqlDatabase);
             appService.AddConfiguration(sqlDatabase, new[] { "DatabaseConnectionString" });
 
             appService.Build(appServicePlan);
 
-            keyVault.AddAccessPolicy("appservice", appService.TenantId, appService.PrincipalId);
+            keyVault.AddAccessPolicy("appservice", appService.PrincipalId);
         }
     }
 }
