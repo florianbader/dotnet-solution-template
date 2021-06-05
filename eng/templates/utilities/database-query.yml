@@ -17,6 +17,21 @@ parameters:
     type: string
     default: ''
 
+  - name: azureSubscriptionName
+    type: string
+
+  - name: environment
+    type: object
+    default:
+      key: dev
+      name: Development
+
+  - name: location
+    type: object
+    default:
+      key: ${{ parameters.location.key }}
+      name: West Europe
+
 steps:
   - task: AzureCLI@2
     displayName: Create Azure SQL firewall rule for build agent
@@ -27,7 +42,7 @@ steps:
       inlineScript: |
         $ip = (Invoke-RestMethod http://ipinfo.io/json | Select-Object -exp ip)
         Write-Host "Creating Azure SQL firewall rule for ip $ip"
-        az sql server firewall-rule create -g "webapi-${{ parameters.environment.key }}-euw-rg" -s "webapi-${{ parameters.environment.key }}-euw-sqls" -n "BuildAgent" --start-ip-address $ip --end-ip-address $ip
+        az sql server firewall-rule create -g "webapi-${{ parameters.environment.key }}-${{ parameters.location.key }}-rg" -s "webapi-${{ parameters.environment.key }}-${{ parameters.location.key }}-sqls" -n "BuildAgent" --start-ip-address $ip --end-ip-address $ip
 
   - task: AzurePowerShell@5
     displayName: ${{ parameters.name }}
@@ -50,4 +65,4 @@ steps:
       scriptLocation: inlineScript
       inlineScript: |
         Write-Host "Removing Azure SQL firewall rule"
-        az sql server firewall-rule delete -g "webapi-${{ parameters.environment.key }}-euw-rg" -s "webapi-${{ parameters.environment.key }}-euw-sqls" -n "BuildAgent"
+        az sql server firewall-rule delete -g "webapi-${{ parameters.environment.key }}-${{ parameters.location.key }}-rg" -s "webapi-${{ parameters.environment.key }}-${{ parameters.location.key }}-sqls" -n "BuildAgent"

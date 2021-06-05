@@ -73,21 +73,23 @@ jobs:
             - template: /eng/templates/utilities/database-query.yml
               parameters:
                 name: Create app permissions in Azure SQL
+                environment: ${{ parameters.environment }}
+                location: ${{ parameters.location }}
                 scriptType: inlineScript
                 inlineScript: |
-                  IF NOT EXISTS(SELECT 1 FROM sys.database_principals WHERE name ='webapi-${{ parameters.environment.key }}-euw-app')
+                  IF NOT EXISTS(SELECT 1 FROM sys.database_principals WHERE name ='webapi-${{ parameters.environment.key }}-${{ parameters.location.key }}-app')
                   BEGIN
-                      CREATE USER [webapi-${{ parameters.environment.key }}-euw-app] WITH DEFAULT_SCHEMA=[dbo] FROM EXTERNAL PROVIDER;
+                      CREATE USER [webapi-${{ parameters.environment.key }}-${{ parameters.location.key }}-app] WITH DEFAULT_SCHEMA=[dbo] FROM EXTERNAL PROVIDER;
                   END
 
-                  IF IS_ROLEMEMBER('db_datareader','webapi-${{ parameters.environment.key }}-euw-app') = 0
+                  IF IS_ROLEMEMBER('db_datareader','webapi-${{ parameters.environment.key }}-${{ parameters.location.key }}-app') = 0
                   BEGIN
-                      ALTER ROLE db_datareader ADD MEMBER [webapi-${{ parameters.environment.key }}-euw-app]
+                      ALTER ROLE db_datareader ADD MEMBER [webapi-${{ parameters.environment.key }}-${{ parameters.location.key }}-app]
                   END
 
-                  IF IS_ROLEMEMBER('db_datawriter','webapi-${{ parameters.environment.key }}-euw-app') = 0
+                  IF IS_ROLEMEMBER('db_datawriter','webapi-${{ parameters.environment.key }}-${{ parameters.location.key }}-app') = 0
                   BEGIN
-                      ALTER ROLE db_datawriter ADD MEMBER [webapi-${{ parameters.environment.key }}-euw-app]
+                      ALTER ROLE db_datawriter ADD MEMBER [webapi-${{ parameters.environment.key }}-${{ parameters.location.key }}-app]
                   END;
 
             - task: AzureCLI@2
@@ -97,4 +99,4 @@ jobs:
                 scriptType: pscore
                 scriptLocation: scriptPath
                 scriptPath: src/Infrastructure/Scripts/post-deployment.ps1
-                arguments: -environment ${{ parameters.environment.key }}
+                arguments: -environment ${{ parameters.environment.key }} -location ${{ parameters.location.key }}
