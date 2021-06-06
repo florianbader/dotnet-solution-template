@@ -46,19 +46,6 @@ steps:
         az sql server firewall-rule create -g "webapi-${{ parameters.environment.key }}-${{ parameters.location.key }}-rg" -s "webapi-${{ parameters.environment.key }}-${{ parameters.location.key }}-sqls" -n "BuildAgent" --start-ip-address $ip --end-ip-address $ip
 
   - task: AzurePowerShell@5
-    displayName: Test
-    inputs:
-      azureSubscription: ${{ parameters.azureSubscriptionName }}
-      azurePowerShellVersion: LatestVersion
-      pwsh: true
-      scriptType: inlineScript
-      inline: |
-        Install-Module -Name SqlServer -Force -Scope CurrentUser
-        $token = (Get-AzAccessToken -ResourceUrl https://database.windows.net).Token
-
-        Invoke-SqlCmd -ServerInstance "webapi-${{ parameters.environment.key }}-${{ parameters.location.key }}-sqls.database.windows.net" -Database "webapi-${{ parameters.environment.key }}-${{ parameters.location.key }}-sqld" -Username ServerAdmin -Password "$(DatabasePassword)" -Query "SELECT 1" -Verbose
-
-  - task: AzurePowerShell@5
     displayName: ${{ parameters.name }}
     inputs:
       azureSubscription: ${{ parameters.azureSubscriptionName }}

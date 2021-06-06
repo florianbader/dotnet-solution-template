@@ -79,7 +79,7 @@ jobs:
                 inlineScript: |
                   IF NOT EXISTS(SELECT 1 FROM sys.database_principals WHERE name ='webapi-${{ parameters.environment.key }}-${{ parameters.location.key }}-app')
                   BEGIN
-                      CREATE USER [webapi-${{ parameters.environment.key }}-${{ parameters.location.key }}-app] WITH DEFAULT_SCHEMA=[dbo] FROM EXTERNAL PROVIDER;
+                      CREATE USER [webapi-${{ parameters.environment.key }}-${{ parameters.location.key }}-app] FROM EXTERNAL PROVIDER WITH DEFAULT_SCHEMA=[dbo];
                   END
 
                   IF IS_ROLEMEMBER('db_datareader','webapi-${{ parameters.environment.key }}-${{ parameters.location.key }}-app') = 0
