@@ -1,0 +1,80 @@
+parameters:
+  - name: azureSubscriptionName
+    type: string
+
+  - name: environment
+    type: object
+    default:
+      key: dev
+      name: Development
+
+  - name: location
+    type: object
+    default:
+      key: euw
+      name: West Europe
+
+jobs:
+  - deployment: Preview_Infrastructure_${{ parameters.environment.key }}_${{ parameters.location.key }}
+    displayName: Preview Infrastructure
+    workspace:
+      clean: all
+    environment: Deployment_${{ parameters.environment.key }}_${{ parameters.location.key }}
+    variables:
+      - group: Pulumi.${{ parameters.environment.key }}
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+            - template: /eng/templates/build/dotnet-build.yml
+              parameters:
+                buildProjects: src/Infrastructure/*.csproj
+                testProjects: ''
+
+            - task: AzureCLI@2
+              displayName: Configure Pulumi
+              inputs:
+                azureSubscription: ${{ parameters.azureSubscriptionName }}
+                scriptType: bash
+                scriptLocation: inlineScript
+                inlineScript: |
+                  AZURE_STORAGE_ACCOUNT="webapiinfrastructurestg"
+                  echo "##vso[task.setvariable variable=AZURE_STORAGE_ACCOUNT;isOutput=false]$AZURE_STORAGE_ACCOUNT"
+
+                  AZURE_STORAGE_KEY=$(az storage account keys list -n "$AZURE_STORAGE_ACCOUNT" --query "[0].value" -o tsv)
+                  echo "##vso[task.setvariable variable=AZURE_STORAGE_KEY;isOutput=false]$AZURE_STORAGE_KEY"
+
+            - task: Pulumi@1
+              displayName: Login Pulumi
+              inputs:
+                azureSubscription: ${{ parameters.azureSubscriptionName }}
+                command: login
+                loginArgs: azblob://state
+                cwd: src/Infrastructure
+                stack: ${{ parameters.environment.key }}
+
+            - task: Pulumi@1
+              displayName: Preview infrastructure
+              inputs:
+                azureSubscription: ${{ parameters.azureSubscriptionName }}
+                command: preview
+                loginArgs: azblob://state
+                cwd: src/Infrastructure
+                stack: ${{ parameters.environment.key }}
+                args: --diff --show-replacement-steps --refresh --suppress-outputs
+
+            - script: |
+                pulumi stack output --json --show-secrets > outputs.json
+              displayName: Export infrastructure outputs
+              workingDirectory: src/Infrastructure/
+              env:
+                PULUMI_CONFIG_PASSPHRASE: $(PULUMI_CONFIG_PASSPHRASE)
+
+            - task: AzureCLI@2
+              displayName: Preview post deployment script
+              inputs:
+                azureSubscription: ${{ parameters.azureSubscriptionName }}
+                scriptType: pscore
+                scriptLocation: scriptPath
+                scriptPath: src/Infrastructure/Scripts/post-deployment.preview.ps1
+                arguments: -environment ${{ parameters.environment.key }} -location ${{ parameters.location.key }}

@@ -45,6 +45,7 @@ indent_size = 2
 
 # Markdown Files
 [*.md]
+max_line_length = off
 trim_trailing_whitespace = false
 
 # Web Files
@@ -58,6 +59,10 @@ end_of_line = crlf
 # Bash Files
 [*.sh]
 end_of_line = lf
+
+# TypeScript files
+[*.ts]
+quote_type = single
 
 ##########################################
 # .NET Language Conventions
@@ -427,6 +432,9 @@ dotnet_diagnostic.SA1633.severity = none
 # SA1600: Elements should be documented
 dotnet_diagnostic.SA1600.severity = suggestion
 
+# SA1601: Partial elements should be documented
+dotnet_diagnostic.SA1601.severity = suggestion
+
 # SA0001: XML comment analysis is disabled due to project configuration
 dotnet_diagnostic.SA0001.severity = none
 
@@ -443,3 +451,7 @@ dotnet_diagnostic.SA1309.severity = none
 
 # S3925: "ISerializable" should be implemented correctly
 dotnet_diagnostic.S3925.severity = none
+
+# S1121: Assignments should not be made from within sub-expressions
+# disables because of false positives with "with-expressions"
+dotnet_diagnostic.S1121.severity = suggestion

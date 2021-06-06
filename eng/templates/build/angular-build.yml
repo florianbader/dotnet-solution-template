@@ -1,0 +1,87 @@
+parameters:
+  - name: buildProject
+    type: string
+    default: ''
+
+  - name: internalFeed
+    type: string
+    default: ''
+
+  - name: shouldTest
+    type: boolean
+    default: true
+
+  - name: shouldLint
+    type: boolean
+    default: true
+
+  - name: shouldPublish
+    type: boolean
+    default: true
+
+  - name: shouldPublishCodeCoverage
+    type: boolean
+    default: true
+
+  - name: publishArtifactName
+    type: string
+    default: Artifact
+
+steps:
+  - checkout: self
+    clean: true
+    persistCredentials: true
+
+  - task: Npm@1
+    displayName: Restore npm packages
+    ${{ if ne(parameters.internalFeed, '') }}:
+      feedsToUse: select
+      vstsFeed: ${{ parameters.internalFeed }}
+    inputs:
+      command: custom
+      customCommand: ci --cache .npm
+      workingDir: ${{ parameters.buildProject }}
+
+  - ${{ if eq(parameters.shouldTest, true) }}:
+      - script: npm run test -- --run-in-band --coverage --coverage-directory $(Agent.TempDirectory)/coverage/ --watch=false
+        displayName: Run tests
+        workingDirectory: ${{ parameters.buildProject }}
+
+      - task: PublishTestResults@2
+        displayName: Publish Angular test results
+        inputs:
+          testResultsFormat: JUnit
+          testResultsFiles: '**/junit.xml'
+          testRunTitle: Unit Tests
+          searchFolder: ${{ parameters.buildProject }}
+
+  - ${{ if and(eq(parameters.shouldTest, true), eq(parameters.shouldPublishCodeCoverage, true)) }}:
+      - script: dotnet tool restore
+        displayName: Restore tools
+
+      - script: dotnet reportgenerator -reports:$(Agent.TempDirectory)/coverage/**/coverage.cobertura.xml -targetdir:$(Agent.TempDirectory)/coverageReport/ -reporttypes:"Cobertura;HtmlInline_AzurePipelines"
+        displayName: Create code coverage report
+
+      - task: PublishCodeCoverageResults@1
+        displayName: Publish code coverage report
+        inputs:
+          codeCoverageTool: Cobertura
+          summaryFileLocation: $(Agent.TempDirectory)/coverageReport/Cobertura.xml
+          reportDirectory: $(Agent.TempDirectory)/coverageReport
+          failIfCoverageEmpty: false
+        env:
+          disable.coverage.autogenerate: true
+
+  - ${{ if eq(parameters.shouldLint, true) }}:
+      - script: npm run lint
+        displayName: Run linting
+        workingDirectory: ${{ parameters.buildProject }}
+
+  - ${{ if eq(parameters.shouldPublish, true) }}:
+      - script: npm run publish
+        displayName: Publish app
+        workingDirectory: ${{ parameters.buildProject }}
+
+      - upload: ${{ parameters.buildProject }}/dist
+        artifact: ${{ parameters.publishArtifactName }}
+        displayName: Publish artifact

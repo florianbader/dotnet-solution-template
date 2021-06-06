@@ -1,8 +1,8 @@
 parameters:
-  - name: FilePath
+  - name: filePath
     type: string
 
-  - name: Tokens
+  - name: tokens
     type: object
 
 steps:
@@ -10,9 +10,11 @@ steps:
       printenv | grep TOKENS_ | sed 's/TOKENS_//g' | while read -r line ; do
           IFS='='
           read -a token <<< "$line"
-          sed -i "s/__${token[0]}__/${token[1]}/g" ${{ parameters.FilePath }}
+          key=$(echo ${token[0]} | sed -e "s|/|\\\/|g")
+          value=$(echo ${token[1]} | sed -e "s|/|\\\/|g")
+          sed -i "s/\_\_$key\_\_/$value/g" ${{ parameters.filePath }}
       done
     displayName: Tokenize file
     env:
-      ${{ each pair in parameters.Tokens }}:
+      ${{ each pair in parameters.tokens }}:
         TOKENS_${{ pair.key }}: ${{ pair.value }}

@@ -1,0 +1,24 @@
+parameters:
+  - name: environment
+    type: object
+    default:
+      key: dev
+      name: Development
+
+jobs:
+  - template: /eng/templates/deployment/staticwebsite-deployment.yml
+    parameters:
+      azureSubscriptionName: $(azureSubscriptionName)
+      azureProductName: $(azureProductName)
+      environment: ${{ parameters.environment }}
+      location:
+        key: euw
+        name: West Europe
+      artifact:
+        name: Website
+      preDeployment:
+        - template: /eng/templates/tokenizer.yml
+          parameters:
+            filePath: $(artifactName)/main*
+            tokens:
+              ApplicationUrl: https://webapi-${{ parameters.environment.key }}-euw-app.azurewebsites.net

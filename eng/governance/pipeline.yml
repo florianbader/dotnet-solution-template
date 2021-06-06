@@ -1,0 +1,32 @@
+schedules:
+  - cron: '0 3 * * *'
+    displayName: Nighly build
+    branches:
+      include:
+        - master
+    always: true
+
+jobs:
+  - job: WebApi
+    steps:
+      - template: /eng/templates/dotnet-build.yml
+        parameters:
+          buildProjects: src/Solution.sln
+          testProjects: '' # remove this if you also want to run your tests in the nightly
+          version: '1.0.0'
+
+      - script: dotnet list .\src\ package --outdated
+        displayName: Show outdated versions
+
+      - script: dotnet list .\src\ package --vulnerable
+        displayName: Show vulnerabilities
+
+  - job: Websites
+    steps:
+      - script: npm outdated
+        displayName: Show outdated versions
+        workingDirectory: src/Website
+
+      - script: npm audit --audit-level=moderate
+        displayName: Show vulnerabilities
+        workingDirectory: src/Website

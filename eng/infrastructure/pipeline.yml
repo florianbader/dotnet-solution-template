@@ -1,0 +1,20 @@
+trigger:
+  batch: false
+  branches:
+    include:
+      - master
+  paths:
+    include:
+      - src/Infrastructure/*
+
+variables:
+  - template: /eng/templates/version.yml
+    parameters:
+      major: 1
+      minor: 0
+  - template: /eng/templates/azure-variables.yml
+
+name: $(Version)
+
+stages:
+  - template: deployment.yml

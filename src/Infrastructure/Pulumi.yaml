@@ -1,0 +1,3 @@
+name: webapi-azure
+runtime: dotnet
+description: IaC

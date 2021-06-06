@@ -1,0 +1,27 @@
+stages:
+  - stage: Dev
+    displayName: Development
+    jobs:
+      - template: /eng/webapi/deployment-env.yml
+        parameters:
+          environment:
+            key: dev
+            name: Development
+
+  - stage: Prev
+    displayName: Preview
+    jobs:
+      - template: /eng/webapi/deployment-env.yml
+        parameters:
+          environment:
+            key: prev
+            name: Preview
+
+  - stage: Prod
+    displayName: Production
+    jobs:
+      - template: /eng/webapi/deployment-env.yml
+        parameters:
+          environment:
+            key: prod
+            name: Production

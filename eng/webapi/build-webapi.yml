@@ -1,0 +1,22 @@
+parameters:
+  - name: shouldTest
+    type: boolean
+    default: true
+
+jobs:
+  - job: Build_WebApi
+    displayName: Build web api
+    workspace:
+      clean: all
+    steps:
+      - template: /eng/templates/build/dotnet-build.yml
+        parameters:
+          buildProjects: 'src/WebApi/*.csproj'
+          publishProjects: 'src/WebApi/*.csproj'
+          publishArtifactName: WebApi
+          # always test on master
+          ${{ if eq(variables['SourceBranch'], 'refs/heads/master') }}:
+            shouldTest: true
+          ${{ if ne(variables['SourceBranch'], 'refs/heads/master') }}:
+            shouldTest: ${{ parameters.shouldTest }}
+          shouldPublishCodeCoverage: true

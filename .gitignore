@@ -2,7 +2,6 @@
 project.lock.json
 project.fragment.lock.json
 artifacts/
-**/Properties/launchSettings.json
 
 *_i.c
 *_p.c
@@ -28,13 +27,22 @@ artifacts/
 *.pidb
 *.svclog
 *.scc
+*.user
 .vs
+.idea
 
 [Bb]in/
 [Oo]bj/
 [Oo]ut/
+[Tt]estResults/
+[Cc]overage/
+[Cc]overageReport/
 
 config/
 .env
 
 node_modules/
+
+JUnit.xml
+coverage.cobertura.xml
+Cobertura.xml

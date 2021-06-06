@@ -6,13 +6,9 @@
 
 [.NET Core 5+ SDK](https://www.microsoft.com/net/download/core) must be installed.
 
-### Installing
-
-...
-
 ### Debugging
 
-...
+See the README.md of the respective projects to learn how to debug those.
 
 ## Contributing
 

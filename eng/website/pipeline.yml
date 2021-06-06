@@ -1,0 +1,38 @@
+trigger:
+  batch: false
+  branches:
+    include:
+      - master
+  paths:
+    include:
+      - src/Website/*
+
+variables:
+  - template: /eng/templates/version.yml
+    parameters:
+      major: 1
+      minor: 0
+  - template: /eng/templates/azure-variables.yml
+
+resources:
+  pipelines:
+    - pipeline: build
+      source: Website.PR
+      trigger:
+        stages:
+          - Build
+
+parameters:
+  - name: shouldTest
+    displayName: Should run unit tests?
+    type: boolean
+    default: true
+
+name: $(Version)
+
+stages:
+  - template: build.yml
+    parameters:
+      shouldTest: ${{ parameters.shouldTest }}
+
+  - template: deployment.yml

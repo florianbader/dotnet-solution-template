@@ -1,0 +1,21 @@
+parameters:
+  - name: shouldTest
+    type: boolean
+    default: true
+
+jobs:
+  - job: Build_Website
+    displayName: Build website
+    workspace:
+      clean: all
+    steps:
+      - template: /eng/templates/build/angular-build.yml
+        parameters:
+          buildProject: src/Website/
+          publishArtifactName: Website
+          # always test on master
+          ${{ if eq(variables['SourceBranch'], 'refs/heads/master') }}:
+            shouldTest: true
+          ${{ if ne(variables['SourceBranch'], 'refs/heads/master') }}:
+            shouldTest: ${{ parameters.shouldTest }}
+          shouldPublishCodeCoverage: true

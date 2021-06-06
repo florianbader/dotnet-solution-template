@@ -1,0 +1,36 @@
+parameters:
+  - name: azureSubscriptionName
+    type: string
+
+  - name: environment
+    type: string
+
+  - name: internalFeed
+    type: string
+    default: ''
+
+steps:
+  - template: dotnet-build.yml
+    parameters:
+      buildProjects: src/Infrastructure/*.csproj
+      testProjects: ''
+      internalFeed: ${{ parameters.internalFeed }}
+
+  - task: Pulumi@1
+    displayName: Preview infrastructure
+    inputs:
+      azureSubscription: ${{ parameters.azureSubscriptionName }}
+      command: preview
+      loginArgs: azblob://state
+      cwd: src/Infrastructure
+      stack: ${{ parameters.environment }}
+      args: --diff --show-replacement-steps
+
+  - task: AzureCLI@2
+    displayName: Execute post deployment script
+    inputs:
+      azureSubscription: ${{ parameters.azureSubscriptionName }}
+      scriptType: pscore
+      scriptLocation: scriptPath
+      scriptPath: src/Infrastructure/Scripts/post-deployment.preview.ps1
+      arguments: -env ${{ parameters.environment }}

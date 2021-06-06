@@ -1,0 +1,13 @@
+# triggered by PR build validation
+trigger: none
+
+variables:
+  - template: /eng/templates/version.yml
+    parameters:
+      major: 1
+      minor: 0
+
+name: $(Version)
+
+stages:
+  - template: build.yml

@@ -1,0 +1,109 @@
+parameters:
+  - name: azureSubscriptionName
+    type: string
+
+  - name: environment
+    type: object
+    default:
+      key: dev
+      name: Development
+
+  - name: location
+    type: object
+    default:
+      key: euw
+      name: West Europe
+
+jobs:
+  - deployment: Deployment_Infrastructure_${{ parameters.environment.key }}_${{ parameters.location.key }}
+    displayName: Deployment Infrastructure
+    workspace:
+      clean: all
+    environment: Deployment_${{ parameters.environment.key }}_${{ parameters.location.key }}
+    variables:
+      - group: Pulumi.${{ parameters.environment.key }}
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+            - template: /eng/templates/build/dotnet-build.yml
+              parameters:
+                buildProjects: src/Infrastructure/*.csproj
+                testProjects: ''
+
+            - task: AzureCLI@2
+              displayName: Configure Pulumi
+              inputs:
+                azureSubscription: ${{ parameters.azureSubscriptionName }}
+                scriptType: bash
+                scriptLocation: inlineScript
+                inlineScript: |
+                  AZURE_STORAGE_ACCOUNT="webapiinfrastructurestg"
+                  echo "##vso[task.setvariable variable=AZURE_STORAGE_ACCOUNT;isOutput=false]$AZURE_STORAGE_ACCOUNT"
+
+                  AZURE_STORAGE_KEY=$(az storage account keys list -n "$AZURE_STORAGE_ACCOUNT" --query "[0].value" -o tsv)
+                  echo "##vso[task.setvariable variable=AZURE_STORAGE_KEY;isOutput=false]$AZURE_STORAGE_KEY"
+
+            - task: Pulumi@1
+              displayName: Login Pulumi
+              inputs:
+                azureSubscription: ${{ parameters.azureSubscriptionName }}
+                command: login
+                loginArgs: azblob://state
+                cwd: src/Infrastructure
+                stack: ${{ parameters.environment.key }}
+
+            - task: Pulumi@1
+              displayName: Publish infrastructure
+              inputs:
+                azureSubscription: ${{ parameters.azureSubscriptionName }}
+                command: up
+                loginArgs: azblob://state
+                cwd: src/Infrastructure
+                stack: ${{ parameters.environment.key }}
+                args: --yes --skip-preview --refresh --suppress-outputs
+
+            - script: |
+                pulumi stack output --json --show-secrets > outputs.json
+              displayName: Export infrastructure outputs
+              workingDirectory: src/Infrastructure/
+              env:
+                PULUMI_CONFIG_PASSPHRASE: $(PULUMI_CONFIG_PASSPHRASE)
+
+            - script: |
+                echo "##vso[task.setvariable variable=ServicesGroupSid;isOutput=false]$(pulumi stack output ServicesGroupSid)"
+              displayName: Export infrastructure sid
+              workingDirectory: src/Infrastructure/
+              env:
+                PULUMI_CONFIG_PASSPHRASE: $(PULUMI_CONFIG_PASSPHRASE)
+
+            - template: /eng/templates/utilities/database-query.yml
+              parameters:
+                name: Create app permissions in Azure SQL
+                azureSubscriptionName: ${{ parameters.azureSubscriptionName }}
+                environment: ${{ parameters.environment }}
+                location: ${{ parameters.location }}
+                inlineScript: |
+                  IF NOT EXISTS(SELECT 1 FROM sys.database_principals WHERE name ='ServicesGroup')
+                  BEGIN
+                      CREATE USER [ServicesGroup] WITH DEFAULT_SCHEMA=[dbo], SID = $(ServicesGroupSid), TYPE = X;
+                  END
+
+                  IF IS_ROLEMEMBER('db_datareader','ServicesGroup') = 0
+                  BEGIN
+                      ALTER ROLE db_datareader ADD MEMBER [ServicesGroup]
+                  END
+
+                  IF IS_ROLEMEMBER('db_datawriter','ServicesGroup') = 0
+                  BEGIN
+                      ALTER ROLE db_datawriter ADD MEMBER [ServicesGroup]
+                  END;
+
+            - task: AzureCLI@2
+              displayName: Execute post deployment script
+              inputs:
+                azureSubscription: ${{ parameters.azureSubscriptionName }}
+                scriptType: pscore
+                scriptLocation: scriptPath
+                scriptPath: src/Infrastructure/Scripts/post-deployment.ps1
+                arguments: -environment ${{ parameters.environment.key }} -location ${{ parameters.location.key }}

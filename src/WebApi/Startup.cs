@@ -1,4 +1,3 @@
-using Hellang.Middleware.ProblemDetails;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -22,21 +21,24 @@ namespace WebApi
                 app.UseHttpsRedirection();
                 app.UseHsts();
             }
+            else
+            {
+                app.MigrateDatabase();
+            }
 
             app.UseSerilog();
 
-            app.UseStaticFiles();
-
             app.UseAuthentication();
+
+            app.UseOpenApi();
 
             app.UseRouting();
 
-            app.UseAuthorization();
+            app.UseCustomCors();
 
+            // app UseAuthorization
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapDefaultControllerRoute();
-
                 endpoints.MapControllers();
 
                 if (env.IsProduction())
@@ -60,11 +62,19 @@ namespace WebApi
 
             services.AddHealthChecks();
 
+            services.AddOpenApi();
+
             services.AddHttpClientServices();
 
-            services.AddProblemDetails(ProblemDetailsConfiguration.Configure);
+            services.AddEntityFramework(Configuration);
 
-            services.AddApplicationInsightsTelemetry(Configuration);
+            services.AddMapper();
+
+            services.AddMediator();
+
+            services.AddProblemDetails();
+
+            services.AddApplicationInsightsTelemetry();
 
             services.AddResponseCaching();
 

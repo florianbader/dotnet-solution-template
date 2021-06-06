@@ -1,0 +1,18 @@
+parameters:
+  - name: environment
+    type: object
+    default:
+      key: dev
+      name: Development
+
+jobs:
+  - template: /eng/templates/deployment/webapp-deployment.yml
+    parameters:
+      azureSubscriptionName: $(azureSubscriptionName)
+      azureProductName: $(azureProductName)
+      environment: ${{ parameters.environment }}
+      location:
+        key: euw
+        name: West Europe
+      artifact:
+        name: WebApi

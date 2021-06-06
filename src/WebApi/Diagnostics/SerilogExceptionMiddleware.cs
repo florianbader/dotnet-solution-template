@@ -11,15 +11,7 @@ namespace WebApi.Diagnostics
 
         public SerilogExceptionMiddleware(RequestDelegate next) => _next = next ?? throw new ArgumentNullException(nameof(next));
 
-        public Task Invoke(HttpContext httpContext)
-        {
-            if (httpContext == null)
-            {
-                throw new ArgumentNullException(nameof(httpContext));
-            }
-
-            return InvokeInternalAsync(httpContext);
-        }
+        public Task Invoke(HttpContext httpContext) => InvokeInternalAsync(httpContext ?? throw new ArgumentNullException(nameof(httpContext)));
 
         private async Task InvokeInternalAsync(HttpContext httpContext)
         {
