@@ -56,7 +56,7 @@ steps:
         Install-Module -Name SqlServer -Force -Scope CurrentUser
         $token = (Get-AzAccessToken -ResourceUrl https://database.windows.net).Token
 
-        Invoke-SqlCmd -ServerInstance "webapi-${{ parameters.environment.key }}-${{ parameters.location.key }}-sqls" -Database "webapi-${{ parameters.environment.key }}-${{ parameters.location.key }}-sqld" -Username ServerAdmin -Password "$(DatabasePassword)" -Query "SELECT 1" -Verbose
+        Invoke-SqlCmd -ServerInstance "webapi-${{ parameters.environment.key }}-${{ parameters.location.key }}-sqls.database.windows.net" -Database "webapi-${{ parameters.environment.key }}-${{ parameters.location.key }}-sqld" -Username ServerAdmin -Password "$(DatabasePassword)" -Query "SELECT 1" -Verbose
 
   - task: AzurePowerShell@5
     displayName: ${{ parameters.name }}
@@ -70,13 +70,13 @@ steps:
           Install-Module -Name SqlServer -Force -Scope CurrentUser
           $token = (Get-AzAccessToken -ResourceUrl https://database.windows.net).Token
 
-          Invoke-SqlCmd -ServerInstance "webapi-${{ parameters.environment.key }}-${{ parameters.location.key }}-sqls" -Database "webapi-${{ parameters.environment.key }}-${{ parameters.location.key }}-sqld" -AccessToken "$token" -Query "${{ parameters.inlineScript }}" -Verbose
+          Invoke-SqlCmd -ServerInstance "webapi-${{ parameters.environment.key }}-${{ parameters.location.key }}-sqls.database.windows.net" -Database "webapi-${{ parameters.environment.key }}-${{ parameters.location.key }}-sqld" -AccessToken "$token" -Query "${{ parameters.inlineScript }}" -Verbose
       ${{ if eq(parameters.scriptType, 'scriptPath') }}:
         inline: |
           Install-Module -Name SqlServer -Force -Scope CurrentUser
           $token = (Get-AzAccessToken -ResourceUrl https://database.windows.net).Token
 
-          Invoke-SqlCmd -ServerInstance "webapi-${{ parameters.environment.key }}-${{ parameters.location.key }}-sqls" -Database "webapi-${{ parameters.environment.key }}-${{ parameters.location.key }}-sqld" -AccessToken "$token" -InputFile "${{ parameters.scriptPath }}" -Verbose
+          Invoke-SqlCmd -ServerInstance "webapi-${{ parameters.environment.key }}-${{ parameters.location.key }}-sqls.database.windows.net" -Database "webapi-${{ parameters.environment.key }}-${{ parameters.location.key }}-sqld" -AccessToken "$token" -InputFile "${{ parameters.scriptPath }}" -Verbose
 
   - task: AzureCLI@2
     displayName: Delete Azure SQL firewall rule for build agent
