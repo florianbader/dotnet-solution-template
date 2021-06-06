@@ -26,14 +26,7 @@ az account set -s <subscriptionId>
 
 ### Service Principal
 
-In order to use a service principal user to create the resources you have to configure the respective settings in Pulumi:
-
-```powershell
-pulumi config set azure:clientId "WWWWWWWW-WWWW-WWWW-WWWW-WWWWWWWWWWWW"
-pulumi config set azure:clientSecret "XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX" --secret
-pulumi config set azure:tenantId "YYYYYYYY-YYYY-YYYY-YYYY-YYYYYYYYYYYY"
-pulumi config set azure:subscriptionId "ZZZZZZZZ-ZZZZ-ZZZZ-ZZZZ-ZZZZZZZZZZZZ"
-```
+In order to create the resources in Azure within an Azure pipeline create a service connection in Azure DevOps via a service principal. The service principal needs additional permissions to manage the Azure Active Directory. Select the service principal in the AAD applications and grant the application permissions in Azure Active Directory (legacy): Directory.ReadWrite.All, Application.ReadWrite.All.
 
 ## State
 
