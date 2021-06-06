@@ -71,13 +71,14 @@ jobs:
                 PULUMI_CONFIG_PASSPHRASE: $(PULUMI_CONFIG_PASSPHRASE)
 
             - script: |
-                pulumi stack output ServicesGroupSid
-                echo "##vso[task.setvariable variable=ServicesGroupSid;isOutput=true]$(pulumi stack output ServicesGroupSid)"
-                echo "$(ServicesGroupSid)"
+                echo "##vso[task.setvariable variable=ServicesGroupSid;isOutput=false]$(pulumi stack output ServicesGroupSid)"
               displayName: Export infrastructure sid
               workingDirectory: src/Infrastructure/
               env:
                 PULUMI_CONFIG_PASSPHRASE: $(PULUMI_CONFIG_PASSPHRASE)
+
+            - script: |
+                echo "$(ServicesGroupSid)"
 
             - template: /eng/templates/utilities/database-query.yml
               parameters:
