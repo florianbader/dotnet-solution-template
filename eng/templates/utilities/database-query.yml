@@ -56,7 +56,7 @@ steps:
         Install-Module -Name SqlServer -Force -Scope CurrentUser
         $token = (Get-AzAccessToken -ResourceUrl https://database.windows.net).Token
 
-        Invoke-SqlCmd -ServerInstance "webapi-${{ parameters.environment.key }}-${{ parameters.location.key }}-sqls" -Database "webapi-${{ parameters.environment.key }}-${{ parameters.location.key }}-sqld" -AccessToken "$token" -Query "SELECT 1" -Verbose
+        Invoke-SqlCmd -ServerInstance "webapi-${{ parameters.environment.key }}-${{ parameters.location.key }}-sqls" -Database "webapi-${{ parameters.environment.key }}-${{ parameters.location.key }}-sqld" -Username ServerAdmin -Password "$(DatabasePassword)" -Query "SELECT 1" -Verbose
 
   - task: AzurePowerShell@5
     displayName: ${{ parameters.name }}

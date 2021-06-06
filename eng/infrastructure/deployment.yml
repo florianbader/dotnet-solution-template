@@ -1,12 +1,12 @@
 stages:
-  - stage: Dev_Preview
-    displayName: Development (Preview)
-    jobs:
-      - template: /eng/infrastructure/preview-env.yml
-        parameters:
-          environment:
-            key: dev
-            name: Development
+  # - stage: Dev_Preview
+  #   displayName: Development (Preview)
+  #   jobs:
+  #     - template: /eng/infrastructure/preview-env.yml
+  #       parameters:
+  #         environment:
+  #           key: dev
+  #           name: Development
 
   - stage: Dev
     displayName: Development
