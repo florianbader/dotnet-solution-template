@@ -55,7 +55,7 @@ namespace Infrastructure
         }
 
         [Output]
-        public Output<string> ServicesGroupSid { get; }
+        public Output<string> ServicesGroupSid { get; set; }
 
         private static Output<string> GetDatabaseSid(Output<string> objectId)
             => objectId.Apply(o =>
