@@ -2,12 +2,16 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Infrastructure.Resources;
 using Pulumi;
+using Pulumi.AzureAD;
+using Config = Pulumi.Config;
 
 namespace Infrastructure
 {
     public class ActiveDirectoryResource : ISecrets, IConfiguration
     {
-        public ActiveDirectoryResource()
+        private readonly Output<string> _currentUserObjectId;
+
+        public ActiveDirectoryResource(Output<string> currentUserObjectId)
         {
             var config = new Config("azureactivedirectory");
 
@@ -15,6 +19,7 @@ namespace Infrastructure
             ClientSecret = config.GetSecret("clientsecret");
             Domain = config.Require("domain");
             TenantId = config.Require("tenantId");
+            _currentUserObjectId = currentUserObjectId;
         }
 
         public string ClientId { get; }
@@ -40,5 +45,20 @@ namespace Infrastructure
             };
 
         public string TenantId { get; }
+
+        public Group CreateGroup(string name, params Output<string>[] identities)
+        {
+            var projectConfig = new Config("project");
+
+            var productName = projectConfig.Require("productName");
+            var environment = projectConfig.Require("environment");
+
+            return new Group(name, new GroupArgs
+            {
+                DisplayName = $"{productName}-{environment}-{name}",
+                Members = identities,
+                Owners = _currentUserObjectId,
+            });
+        }
     }
 }

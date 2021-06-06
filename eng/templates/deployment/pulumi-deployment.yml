@@ -70,6 +70,24 @@ jobs:
             #   env:
             #     PULUMI_CONFIG_PASSPHRASE: $(PULUMI_CONFIG_PASSPHRASE)
 
+            - script: |
+                echo "##vso[task.setvariable variable=ServicesGroupSid;isOutput=true]$(pulumi stack output ServicesGroupSid)"
+              displayName: Export infrastructure sid
+              workingDirectory: src/Infrastructure/
+              env:
+                PULUMI_CONFIG_PASSPHRASE: $(PULUMI_CONFIG_PASSPHRASE)
+
+            - task: AzureCLI@2
+              displayName: Create Azure SQL firewall rule for build agent
+              inputs:
+                azureSubscription: ${{ parameters.azureSubscriptionName }}
+                scriptType: pscore
+                scriptLocation: inlineScript
+                inlineScript: |
+                  $ip = (Invoke-RestMethod http://ipinfo.io/json | Select-Object -exp ip)
+                  Write-Host "Creating Azure SQL firewall rule for ip $ip"
+                  az sql server firewall-rule create -g "webapi-${{ parameters.environment.key }}-${{ parameters.location.key }}-rg" -s "webapi-${{ parameters.environment.key }}-${{ parameters.location.key }}-sqls" -n "BuildAgent" --start-ip-address $ip --end-ip-address $ip
+
             - template: /eng/templates/utilities/database-query.yml
               parameters:
                 name: Create app permissions in Azure SQL
@@ -79,7 +97,7 @@ jobs:
                 inlineScript: |
                   IF NOT EXISTS(SELECT 1 FROM sys.database_principals WHERE name ='webapi-${{ parameters.environment.key }}-${{ parameters.location.key }}-app')
                   BEGIN
-                      CREATE USER [webapi-${{ parameters.environment.key }}-${{ parameters.location.key }}-app] FROM EXTERNAL PROVIDER WITH DEFAULT_SCHEMA=[dbo];
+                      CREATE USER [webapi-${{ parameters.environment.key }}-${{ parameters.location.key }}-app] WITH DEFAULT_SCHEMA=[dbo], SID = $(ServicesGroupSid), TYPE = X;
                   END
 
                   IF IS_ROLEMEMBER('db_datareader','webapi-${{ parameters.environment.key }}-${{ parameters.location.key }}-app') = 0
@@ -100,3 +118,14 @@ jobs:
                 scriptLocation: scriptPath
                 scriptPath: src/Infrastructure/Scripts/post-deployment.ps1
                 arguments: -environment ${{ parameters.environment.key }} -location ${{ parameters.location.key }}
+
+            - task: AzureCLI@2
+              displayName: Delete Azure SQL firewall rule for build agent
+              condition: always()
+              inputs:
+                azureSubscription: ${{ parameters.azureSubscriptionName }}
+                scriptType: pscore
+                scriptLocation: inlineScript
+                inlineScript: |
+                  Write-Host "Removing Azure SQL firewall rule"
+                  az sql server firewall-rule delete -g "webapi-${{ parameters.environment.key }}-${{ parameters.location.key }}-rg" -s "webapi-${{ parameters.environment.key }}-${{ parameters.location.key }}-sqls" -n "BuildAgent"

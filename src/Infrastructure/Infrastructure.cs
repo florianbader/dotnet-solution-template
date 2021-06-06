@@ -1,3 +1,6 @@
+using System;
+using System.Globalization;
+using System.Linq;
 using Infrastructure.Resources;
 using Pulumi;
 using Pulumi.AzureNative.Authorization;
@@ -9,7 +12,7 @@ namespace Infrastructure
         public Infrastructure()
         {
             var currentConfig = Output.Create(GetClientConfig.InvokeAsync());
-            var currentUserObjectId = currentConfig.Apply(c => c.ClientId);
+            var currentUserObjectId = currentConfig.Apply(c => c.ObjectId);
             var tenantId = currentConfig.Apply(c => c.TenantId);
 
             var resourceGroup = new ResourceGroupResource();
@@ -44,6 +47,21 @@ namespace Infrastructure
             appService.Build(appServicePlan);
 
             keyVault.AddAccessPolicy("appservice", appService.PrincipalId);
+
+            var activeDirectory = new ActiveDirectoryResource(currentUserObjectId);
+            var serviceGroup = activeDirectory.CreateGroup("servicegroup", appService.PrincipalId);
+
+            ServicesGroupSid = GetDatabaseSid(serviceGroup.ObjectId);
         }
+
+        [Output]
+        public Output<string> ServicesGroupSid { get; }
+
+        private static Output<string> GetDatabaseSid(Output<string> objectId)
+            => objectId.Apply(o =>
+            {
+                var guid = Guid.Parse(o);
+                return "0x" + string.Join(string.Empty, guid.ToByteArray().Select(b => b.ToString("X2", CultureInfo.InvariantCulture)));
+            });
     }
 }
