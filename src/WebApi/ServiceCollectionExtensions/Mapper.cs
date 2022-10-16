@@ -1,10 +1,8 @@
 using Application;
-using Microsoft.Extensions.DependencyInjection;
 
-namespace WebApi
+namespace WebApi;
+
+public static class Mapper
 {
-    public static class Mapper
-    {
-        public static void AddMapper(this IServiceCollection services) => services.AddAutoMapper(typeof(GenericApplicationException));
-    }
+    public static void AddMapper(this IServiceCollection services) => services.AddAutoMapper(typeof(GenericApplicationException));
 }

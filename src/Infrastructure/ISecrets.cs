@@ -1,10 +1,9 @@
 using System.Collections.Generic;
 using Pulumi;
 
-namespace Infrastructure
+namespace Infrastructure;
+
+public interface ISecrets
 {
-    public interface ISecrets
-    {
-        IEnumerable<(string Key, Output<string>? Value)> Secrets { get; }
-    }
+    IEnumerable<(string Key, Output<string>? Value)> Secrets { get; }
 }

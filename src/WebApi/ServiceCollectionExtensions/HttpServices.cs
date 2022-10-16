@@ -1,13 +1,9 @@
-using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.DependencyInjection;
+namespace WebApi;
 
-namespace WebApi
+public static class HttpServices
 {
-    public static class HttpServices
-    {
-        public static IServiceCollection AddHttpClientServices(this IServiceCollection services)
-            => services
-                .AddSingleton<IHttpContextAccessor, HttpContextAccessor>()
-                .AddHttpClient();
-    }
+    public static IServiceCollection AddHttpClientServices(this IServiceCollection services)
+        => services
+            .AddSingleton<IHttpContextAccessor, HttpContextAccessor>()
+            .AddHttpClient();
 }

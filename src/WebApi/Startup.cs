@@ -1,84 +1,77 @@
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
+namespace WebApi;
 
-namespace WebApi
+public class Startup
 {
-    public class Startup
+    public Startup(IConfiguration configuration) => Configuration = configuration;
+
+    public IConfiguration Configuration { get; }
+
+    public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
     {
-        public Startup(IConfiguration configuration) => Configuration = configuration;
+        app.UseProblemDetails();
 
-        public IConfiguration Configuration { get; }
-
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        if (!env.IsDevelopment())
         {
-            app.UseProblemDetails();
-
-            if (!env.IsDevelopment())
-            {
-                app.UseHttpsRedirection();
-                app.UseHsts();
-            }
-            else
-            {
-                app.MigrateDatabase();
-            }
-
-            app.UseSerilog();
-
-            app.UseAuthentication();
-
-            app.UseOpenApi();
-
-            app.UseRouting();
-
-            app.UseCustomCors();
-
-            // app UseAuthorization
-            app.UseEndpoints(endpoints =>
-            {
-                endpoints.MapControllers();
-
-                if (env.IsProduction())
-                {
-                    endpoints.MapHealthChecks();
-                }
-            });
-
-            app.UseResponseCaching();
-
-            app.UseResponseCompression();
+            app.UseHttpsRedirection();
+            app.UseHsts();
+        }
+        else
+        {
+            app.MigrateDatabase();
         }
 
-        public void ConfigureServices(IServiceCollection services)
+        app.UseSerilog();
+
+        app.UseAuthentication();
+
+        app.UseOpenApi();
+
+        app.UseRouting();
+
+        app.UseCustomCors();
+
+        // app UseAuthorization
+        app.UseEndpoints(endpoints =>
         {
-            services.AddControllers();
+            endpoints.MapControllers();
 
-            services.AddCors();
+            if (env.IsProduction())
+            {
+                endpoints.MapHealthChecks();
+            }
+        });
 
-            services.AddOptions();
+        app.UseResponseCaching();
 
-            services.AddHealthChecks();
+        app.UseResponseCompression();
+    }
 
-            services.AddOpenApi();
+    public void ConfigureServices(IServiceCollection services)
+    {
+        services.AddControllers();
 
-            services.AddHttpClientServices();
+        services.AddCors();
 
-            services.AddEntityFramework(Configuration);
+        services.AddOptions();
 
-            services.AddMapper();
+        services.AddHealthChecks();
 
-            services.AddMediator();
+        services.AddOpenApi();
 
-            services.AddProblemDetails();
+        services.AddHttpClientServices();
 
-            services.AddApplicationInsightsTelemetry();
+        services.AddEntityFramework(Configuration);
 
-            services.AddResponseCaching();
+        services.AddMapper();
 
-            services.AddResponseCompression();
-        }
+        services.AddMediator();
+
+        services.AddProblemDetails();
+
+        services.AddApplicationInsightsTelemetry();
+
+        services.AddResponseCaching();
+
+        services.AddResponseCompression();
     }
 }

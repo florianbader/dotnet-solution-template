@@ -1,4 +1,3 @@
-namespace Application
-{
-    public record ValidationResult(string ErrorCode, string ErrorMessage);
-}
+namespace Application;
+
+public record ValidationResult(string ErrorCode, string ErrorMessage);

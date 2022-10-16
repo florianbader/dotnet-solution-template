@@ -1,11 +1,9 @@
-using System;
 using Hellang.Middleware.ProblemDetails;
 
-namespace WebApi
+namespace WebApi;
+
+public class ApplicationProblemDetails : StatusCodeProblemDetails
 {
-    public class ApplicationProblemDetails : StatusCodeProblemDetails
-    {
-        public ApplicationProblemDetails(Exception exception, int statusCode)
-            : base(statusCode) => Detail = exception.Message;
-    }
+    public ApplicationProblemDetails(Exception exception, int statusCode)
+        : base(statusCode) => Detail = exception.Message;
 }

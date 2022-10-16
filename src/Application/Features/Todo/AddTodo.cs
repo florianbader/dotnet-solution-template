@@ -6,45 +6,44 @@ using FluentValidation;
 using MediatR;
 using Microsoft.Extensions.Logging;
 
-namespace Application.Features.Todo
+namespace Application.Features.Todo;
+
+public class AddTodo
 {
-    public class AddTodo
+    public class Handler : IRequestHandler<Command, Todo>
     {
-        public class Handler : IRequestHandler<Command, Todo>
+        private readonly ApplicationDbContext _applicationDbContext;
+        private readonly ILogger<AddTodo> _logger;
+        private readonly IMapper _mapper;
+
+        public Handler(ApplicationDbContext applicationDbContext, IMapper mapper, ILogger<AddTodo> logger)
+            => (_applicationDbContext, _mapper, _logger) = (applicationDbContext, mapper, logger);
+
+        public async Task<Todo> Handle(Command request, CancellationToken cancellationToken)
         {
-            private readonly ApplicationDbContext _applicationDbContext;
-            private readonly ILogger<AddTodo> _logger;
-            private readonly IMapper _mapper;
+            _logger.LogTrace("Adding todo {@Request}", request);
 
-            public Handler(ApplicationDbContext applicationDbContext, IMapper mapper, ILogger<AddTodo> logger)
-                => (_applicationDbContext, _mapper, _logger) = (applicationDbContext, mapper, logger);
+            var todo = _mapper.Map<Todo>(request);
+            var entityEntry = _applicationDbContext.Todo.Add(todo);
 
-            public async Task<Todo> Handle(Command request, CancellationToken cancellationToken)
-            {
-                _logger.LogTrace("Adding todo {@Request}", request);
+            await _applicationDbContext.SaveChangesAsync(cancellationToken);
 
-                var todo = _mapper.Map<Todo>(request);
-                var entityEntry = _applicationDbContext.Todo.Add(todo);
+            _logger.LogTrace("Added todo with id {Id}", entityEntry.Entity.Id);
 
-                await _applicationDbContext.SaveChangesAsync(cancellationToken);
-
-                _logger.LogTrace("Added todo with id {Id}", entityEntry.Entity.Id);
-
-                return entityEntry.Entity;
-            }
+            return entityEntry.Entity;
         }
+    }
 
-        public record Command(string Name) : IRequest<Todo>;
+    public record Command(string Name) : IRequest<Todo>;
 
-        public class MappingProfile : Profile
-        {
-            public MappingProfile() =>
-                CreateMap<Command, Todo>();
-        }
+    public class MappingProfile : Profile
+    {
+        public MappingProfile() =>
+            CreateMap<Command, Todo>();
+    }
 
-        public class Validator : AbstractValidator<Command>
-        {
-            public Validator() => RuleFor(entity => entity.Name).NotEmpty().MaximumLength(256);
-        }
+    public class Validator : AbstractValidator<Command>
+    {
+        public Validator() => RuleFor(entity => entity.Name).NotEmpty().MaximumLength(256);
     }
 }

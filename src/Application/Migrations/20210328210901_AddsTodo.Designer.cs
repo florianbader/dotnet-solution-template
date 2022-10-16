@@ -6,41 +6,40 @@ using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
-namespace Application.Migrations
+namespace Application.Migrations;
+
+[DbContext(typeof(ApplicationDbContext))]
+[Migration("20210328210901_AddsTodo")]
+partial class AddsTodo
 {
-    [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20210328210901_AddsTodo")]
-    partial class AddsTodo
+    protected override void BuildTargetModel(ModelBuilder modelBuilder)
     {
-        protected override void BuildTargetModel(ModelBuilder modelBuilder)
-        {
 #pragma warning disable 612, 618
-            modelBuilder
-                .HasAnnotation("Relational:MaxIdentifierLength", 128)
-                .HasAnnotation("ProductVersion", "5.0.4")
-                .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+        modelBuilder
+            .HasAnnotation("Relational:MaxIdentifierLength", 128)
+            .HasAnnotation("ProductVersion", "5.0.4")
+            .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-            modelBuilder.Entity("Application.Features.Todo.Todo", b =>
-                {
-                    b.Property<string>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasMaxLength(36)
-                        .IsUnicode(false)
-                        .HasColumnType("varchar(36)");
+        modelBuilder.Entity("Application.Features.Todo.Todo", b =>
+            {
+                b.Property<string>("Id")
+                    .ValueGeneratedOnAdd()
+                    .HasMaxLength(36)
+                    .IsUnicode(false)
+                    .HasColumnType("varchar(36)");
 
-                    b.Property<bool>("IsDone")
-                        .HasColumnType("bit");
+                b.Property<bool>("IsDone")
+                    .HasColumnType("bit");
 
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
+                b.Property<string>("Name")
+                    .IsRequired()
+                    .HasMaxLength(256)
+                    .HasColumnType("nvarchar(256)");
 
-                    b.HasKey("Id");
+                b.HasKey("Id");
 
-                    b.ToTable("Todo");
-                });
+                b.ToTable("Todo");
+            });
 #pragma warning restore 612, 618
-        }
     }
 }

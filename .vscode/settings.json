@@ -18,4 +18,5 @@
   "[yaml]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
+  "msbuildProjectTools.nuget.includePreRelease": false,
 }
