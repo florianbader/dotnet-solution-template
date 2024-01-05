@@ -1,11 +1,11 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
   <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
     <UserSecretsId>6f3a3ea3-3a23-43c8-8782-4331c86ab625</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" />
+
     <PackageReference Include="Serilog.AspNetCore" />
     <PackageReference Include="Serilog.Exceptions" />
     <PackageReference Include="Serilog.Enrichers.CorrelationId" />
@@ -18,12 +18,11 @@
     <PackageReference Include="Hellang.Middleware.ProblemDetails" />
 
     <PackageReference Include="MediatR" />
-    <PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" />
 
     <PackageReference Include="AutoMapper" />
     <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" />
 
-    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
+    <PackageReference Include="Swashbuckle.AspNetCore" />
   </ItemGroup>
 
   <ItemGroup>

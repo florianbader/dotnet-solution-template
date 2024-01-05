@@ -4,7 +4,7 @@
 
 ### Prerequisites
 
-[.NET Core 5+ SDK](https://www.microsoft.com/net/download/core) must be installed.
+[.NET Core 8+ SDK](https://www.microsoft.com/net/download/core) must be installed.
 
 ### Debugging
 

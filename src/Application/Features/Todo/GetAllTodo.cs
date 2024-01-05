@@ -28,5 +28,6 @@ public class GetAllTodo
         }
     }
 
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Minor Code Smell", "S2094:Classes should not be empty", Justification = "Query object without parameters")]
     public record Query() : IRequest<IEnumerable<Todo>>;
 }

@@ -11,7 +11,7 @@ public static class Mediator
     {
         services.AddTransientFromAssembly(typeof(GenericApplicationException), typeof(IValidator<>));
 
-        services.AddMediatR(typeof(GenericApplicationException));
+        services.AddMediatR(opt => opt.RegisterServicesFromAssembly(typeof(GenericApplicationException).Assembly));
 
         services.AddTransient(typeof(IPipelineBehavior<,>), typeof(RequestValidationBehavior<,>));
     }

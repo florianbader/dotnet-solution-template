@@ -1,5 +1,6 @@
 <Project>
   <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
     <LangVersion>latest</LangVersion>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
@@ -9,23 +10,23 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.CodeAnalysis.NetAnalyzers" Version="6.0.0" PrivateAssets="all" />
-    <PackageReference Include="StyleCop.Analyzers" Version="1.2.0-beta.435" PrivateAssets="all" />
-    <PackageReference Include="SonarAnalyzer.CSharp" Version="8.46.0.54807" PrivateAssets="all" />
-    <PackageReference Include="Roslynator.Analyzers" Version="4.1.1" PrivateAssets="all" />
-    <PackageReference Include="IDisposableAnalyzers" Version="4.0.2" PrivateAssets="all" />
+    <PackageReference Include="Microsoft.CodeAnalysis.NetAnalyzers" PrivateAssets="all" />
+    <PackageReference Include="StyleCop.Analyzers" PrivateAssets="all" />
+    <PackageReference Include="SonarAnalyzer.CSharp" PrivateAssets="all" />
+    <PackageReference Include="Roslynator.Analyzers" PrivateAssets="all" />
+    <PackageReference Include="IDisposableAnalyzers" PrivateAssets="all" />
   </ItemGroup>
 
   <ItemGroup Condition="$(IsTestProject)">
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.3.2" />
-    <PackageReference Include="xunit" Version="2.4.2" />
-    <PackageReference Include="coverlet.collector" Version="3.1.2" />
-    <PackageReference Include="coverlet.msbuild" Version="3.1.2" />
-    <PackageReference Include="FluentAssertions" Version="6.7.0" />
-    <PackageReference Include="FluentAssertions.Analyzers" Version="0.17.2" />
-    <PackageReference Include="Moq" Version="4.18.2" />
-    <PackageReference Include="AutoFixture" Version="4.17.0" />
-    <PackageReference Include="AutoFixture.AutoMoq" Version="4.17.0" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" />
+    <PackageReference Include="xunit" />
+    <PackageReference Include="coverlet.collector" />
+    <PackageReference Include="coverlet.msbuild" />
+    <PackageReference Include="FluentAssertions" />
+    <PackageReference Include="FluentAssertions.Analyzers" />
+    <PackageReference Include="Moq" />
+    <PackageReference Include="AutoFixture" />
+    <PackageReference Include="AutoFixture.AutoMoq" />
 
     <Using Include="Xunit" />
     <Using Include="Moq" />
@@ -35,8 +36,8 @@
   </ItemGroup>
 
   <ItemGroup Condition="$(IsTestProject) and !$(TargetFramework.StartsWith('netstandard'))">
-    <PackageReference Include="xunit.runner.console" Version="2.4.2" />
-    <PackageReference Include="xunit.runner.visualstudio" Version="2.4.5" />
+    <PackageReference Include="xunit.runner.console" />
+    <PackageReference Include="xunit.runner.visualstudio" />
   </ItemGroup>
 
   <ItemGroup>

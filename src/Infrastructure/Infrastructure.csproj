@@ -1,14 +1,8 @@
 <Project Sdk="Microsoft.NET.Sdk">
-
-  <PropertyGroup>
-    <OutputType>Exe</OutputType>
-    <TargetFramework>net6.0</TargetFramework>
-  </PropertyGroup>
-
   <ItemGroup>
-    <PackageReference Include="Pulumi.AzureAD" Version="5.29.1" />
-    <PackageReference Include="Pulumi.AzureNative" Version="1.81.0" />
-    <PackageReference Include="Pulumi.Azure" Version="4.6.0" />
+    <PackageReference Include="Pulumi.AzureAD" />
+    <PackageReference Include="Pulumi.AzureNative" />
+    <PackageReference Include="Pulumi.Azure" />
 
     <Using Include="Pulumi" />
   </ItemGroup>

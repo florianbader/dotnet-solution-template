@@ -9,6 +9,8 @@ namespace Infrastructure;
 
 public class Infrastructure : Stack
 {
+    private static readonly string[] Configurations = new[] { "DatabaseConnectionString" };
+
     public Infrastructure()
     {
         var currentConfig = Output.Create(GetClientConfig.InvokeAsync());
@@ -26,7 +28,7 @@ public class Infrastructure : Stack
 
         // key vault needs to be build before any resource that accesses its secrets
         keyVault.Build();
-        appService.AddConfiguration(keyVault, new[] { "KeyVaultName" });
+        appService.AddConfiguration(keyVault, "KeyVaultName");
 
         var staticWebsite = new StorageAccountResource(resourceGroup, "sw");
         staticWebsite.Build();
@@ -37,12 +39,12 @@ public class Infrastructure : Stack
 
         var applicationInsights = new ApplicationInsightsResource(resourceGroup);
         applicationInsights.Build();
-        appService.AddConfiguration(applicationInsights, new[] { "APPINSIGHTS_INSTRUMENTATIONKEY" });
+        appService.AddConfiguration(applicationInsights, "APPINSIGHTS_INSTRUMENTATIONKEY");
 
         var sqlDatabase = new SqlServerResource(resourceGroup, tenantId, currentUserObjectId);
         sqlDatabase.Build();
         keyVault.AddSecrets(sqlDatabase);
-        appService.AddConfiguration(sqlDatabase, new[] { "DatabaseConnectionString" });
+        appService.AddConfiguration(sqlDatabase, Configurations);
 
         appService.Build(appServicePlan);
 
